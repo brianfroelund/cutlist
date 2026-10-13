@@ -1144,3 +1144,11 @@ body.sawing * {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Static text in index.html for crawlers; replaced when the app starts. */
+.seo-fallback {
+  max-width: 62ch;
+  margin: 48px auto;
+  padding: 0 var(--space-4);
+  color: var(--ink-soft);
+}
