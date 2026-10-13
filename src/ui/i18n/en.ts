@@ -113,6 +113,8 @@ export const en = {
   planedIn: (max: string, trim: string) => `planed in blanks ≤ ${max}, trim ${trim} per end`,
   printKerf: (kerf: string) => `kerf ${kerf}`,
   printFooter: 'cutlist · measure twice, cut once',
+  printQr: 'Scan to open this project',
+  printQrTooLarge: 'Too big for a QR code — use Share to send the link.',
 
   // Messages
   removed: (what: string) => `Removed ${what}.`,

@@ -109,6 +109,8 @@ export const nl: Messages = {
   planedIn: (max, trim) => `geschaafd in stukken ≤ ${max}, afval ${trim} per eind`,
   printKerf: (kerf) => `zaagsnede ${kerf}`,
   printFooter: 'cutlist · twee keer meten, één keer zagen',
+  printQr: 'Scan om dit project te openen',
+  printQrTooLarge: 'Te groot voor een QR-code — gebruik Delen om de link te sturen.',
 
   removed: (what) => `${what} verwijderd.`,
   undo: 'Ongedaan maken',

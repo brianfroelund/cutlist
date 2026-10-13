@@ -106,6 +106,8 @@ export const sv: Messages = {
   planedIn: (max, trim) => `hyvlas i ämnen ≤ ${max}, kap ${trim} per ände`,
   printKerf: (kerf) => `sågspår ${kerf}`,
   printFooter: 'cutlist · mät två gånger, kapa en gång',
+  printQr: 'Skanna för att öppna projektet',
+  printQrTooLarge: 'För stort för en QR-kod — använd Dela för att skicka länken.',
 
   removed: (what) => `Tog bort ${what}.`,
   undo: 'Ångra',

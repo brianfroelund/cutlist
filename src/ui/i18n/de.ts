@@ -110,6 +110,8 @@ export const de: Messages = {
   planedIn: (max, trim) => `gehobelt in Rohlingen ≤ ${max}, Verschnitt ${trim} pro Ende`,
   printKerf: (kerf) => `Schnittbreite ${kerf}`,
   printFooter: 'cutlist · zweimal messen, einmal schneiden',
+  printQr: 'Scannen, um dieses Projekt zu öffnen',
+  printQrTooLarge: 'Zu groß für einen QR-Code — nutze Teilen, um den Link zu senden.',
 
   removed: (what) => `${what} entfernt.`,
   undo: 'Rückgängig',

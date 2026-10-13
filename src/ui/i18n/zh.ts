@@ -103,6 +103,8 @@ export const zh: Messages = {
   planedIn: (max, trim) => `按 ≤ ${max} 的毛料刨削，每端修边 ${trim}`,
   printKerf: (kerf) => `锯缝 ${kerf}`,
   printFooter: 'cutlist · 量两次，切一次',
+  printQr: '扫码打开此项目',
+  printQrTooLarge: '项目太大，无法生成二维码——请用“分享”发送链接。',
 
   removed: (what) => `已删除${what}。`,
   undo: '撤销',

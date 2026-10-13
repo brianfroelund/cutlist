@@ -111,6 +111,8 @@ export const it: Messages = {
   planedIn: (max, trim) => `piallato in sbozzi ≤ ${max}, scarto ${trim} per estremità`,
   printKerf: (kerf) => `spessore di taglio ${kerf}`,
   printFooter: 'cutlist · misura due volte, taglia una volta',
+  printQr: 'Scansiona per aprire questo progetto',
+  printQrTooLarge: 'Troppo grande per un codice QR — usa Condividi per inviare il link.',
 
   removed: (what) => `Rimosso ${what}.`,
   undo: 'Annulla',

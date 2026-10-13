@@ -113,6 +113,8 @@ export const pl: Messages = {
   planedIn: (max, trim) => `strugane w odcinkach ≤ ${max}, naddatek ${trim} na koniec`,
   printKerf: (kerf) => `rzaz ${kerf}`,
   printFooter: 'cutlist · dwa razy mierz, raz tnij',
+  printQr: 'Zeskanuj, aby otworzyć ten projekt',
+  printQrTooLarge: 'Za duży na kod QR — użyj Udostępnij, aby wysłać link.',
 
   removed: (what) => `Usunięto: ${what}.`,
   undo: 'Cofnij',

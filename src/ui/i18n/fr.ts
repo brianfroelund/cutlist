@@ -110,6 +110,8 @@ export const fr: Messages = {
   planedIn: (max, trim) => `rabotée en ébauches ≤ ${max}, chute ${trim} par bout`,
   printKerf: (kerf) => `trait de scie ${kerf}`,
   printFooter: 'cutlist · mesurer deux fois, couper une fois',
+  printQr: 'Scannez pour ouvrir ce projet',
+  printQrTooLarge: 'Trop grand pour un QR code — utilisez Partager pour envoyer le lien.',
 
   removed: (what) => `${what} supprimé(e).`,
   undo: 'Annuler',

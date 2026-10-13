@@ -118,3 +118,14 @@ test('identical boards are listed once', async ({ page, isMobile }) => {
   await expect(page.getByTestId('board')).toHaveCount(1);
   await expect(page.getByTestId('board')).toContainText('2 × 2400 mm');
 });
+
+test('the printout carries a QR code back to the project', async ({ page, isMobile }) => {
+  await page.goto('./');
+  await addPart(page, 'Leg', '700', '2');
+  await showResults(page, isMobile);
+  await expect(page.getByTestId('total-boards')).toHaveText('1');
+  await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.print-qr svg')).toBeVisible();
+  await expect(page.locator('.print-qr')).toContainText('Scan to open this project');
+});

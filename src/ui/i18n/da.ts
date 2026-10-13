@@ -107,6 +107,8 @@ export const da: Messages = {
   planedIn: (max, trim) => `høvles i emner ≤ ${max}, afskær ${trim} pr. ende`,
   printKerf: (kerf) => `snitbredde ${kerf}`,
   printFooter: 'cutlist · mål to gange, skær én gang',
+  printQr: 'Scan for at åbne projektet',
+  printQrTooLarge: 'For stort til en QR-kode — brug Del til at sende linket.',
 
   removed: (what) => `Fjernede ${what}.`,
   undo: 'Fortryd',

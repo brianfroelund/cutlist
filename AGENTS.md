@@ -20,7 +20,7 @@ A static, client-only web app that plans linear (1D) cuts for woodworking. You e
 - Vite + TypeScript (strict), **no UI framework**, no backend.
 - Vitest + fast-check for unit/property tests; Playwright for e2e (desktop 1280×800 and Pixel 7).
 - ESLint (typescript-eslint) + Prettier.
-- Single runtime dependency: `lz-string` (share links).
+- Runtime dependencies: `lz-string` (share links) and `uqr` (print QR code; see ADR-0004).
 
 ## Commands
 

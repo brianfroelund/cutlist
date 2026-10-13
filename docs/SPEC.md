@@ -54,6 +54,7 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 - S30. A summary shows boards, total stock length, waste %, a one-line verdict and a shopping list per material.
 - S31. Each board shows a to-scale bar (parts, kerfs, offcut) and a cut list with checkboxes. Consecutive identical cuts are collapsed (`3 × 700 mm Leg`).
 - S32. Parts are told apart by pattern (8 patterns), never by color.
+- S34. The print header has a QR code with the project's share link, so a phone can reopen the exact project from the paper. If the link is too long to scan reliably, a short note suggests using Share instead.
 - S33. Print produces a greyscale document. Page 1 has a project header with date and kerf, the summary, and a complete parts list per material (pattern, part, length, quantity, totals, planing settings). Each material follows on its own page. Inputs and controls are hidden. The parts list appears only in print.
 
 ### Persistence and sharing

@@ -49,6 +49,7 @@ flowchart LR
 | `ui/inputs.ts`      | Settings card, material cards, rows, paste handling.                                                           |
 | `ui/i18n/`          | Locale catalogues (`en.ts` is the source), detection, number/date formatting. Non-English locales load lazily. |
 | `ui/results.ts`     | Summary, boards, blanks, cut lists, print header.                                                              |
+| `ui/qr.ts`          | QR code as SVG elements (via `uqr`), filled into the print header on `beforeprint`.                            |
 | `ui/delight/*`      | FLIP, swipe-to-delete, sawdust, favicon spinner, saw-blade toy.                                                |
 | `styles/tokens.css` | Solarized palette and design tokens (light and dark).                                                          |
 | `styles/print.css`  | Greyscale print layout.                                                                                        |

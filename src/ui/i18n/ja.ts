@@ -105,6 +105,8 @@ export const ja: Messages = {
   planedIn: (max, trim) => `${max} 以下の荒木で鉋がけ、端ごとに ${trim} 切り落とし`,
   printKerf: (kerf) => `刃厚 ${kerf}`,
   printFooter: 'cutlist · 二度測って一度で切る',
+  printQr: 'スキャンしてこのプロジェクトを開く',
+  printQrTooLarge: 'QR コードには大きすぎます — 「共有」でリンクを送ってください。',
 
   removed: (what) => `${what}を削除しました。`,
   undo: '元に戻す',

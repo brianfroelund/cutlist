@@ -80,12 +80,18 @@ function printHeader(project: Project) {
   return h(
     'header',
     { class: 'print-only print-header' },
-    h('h1', {}, project.name || 'cutlist'),
     h(
-      'p',
+      'div',
       {},
-      `${fmtDate(new Date())} · ${copy.printKerf(fmtLength(project.kerf, project.units))}`,
+      h('h1', {}, project.name || 'cutlist'),
+      h(
+        'p',
+        {},
+        `${fmtDate(new Date())} · ${copy.printKerf(fmtLength(project.kerf, project.units))}`,
+      ),
     ),
+    // Filled with a QR code just before printing; see app.ts.
+    h('div', { class: 'print-qr' }),
   );
 }
 

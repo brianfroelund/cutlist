@@ -58,6 +58,29 @@
     display: block;
   }
 
+  .print-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12pt;
+  }
+
+  .print-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3pt;
+    max-width: 44mm;
+    font-size: 7.5pt;
+    text-align: center;
+    color: #444;
+  }
+
+  .print-qr svg {
+    width: 40mm;
+    height: 40mm;
+  }
+
   .print-header h1 {
     font-size: 18pt;
   }

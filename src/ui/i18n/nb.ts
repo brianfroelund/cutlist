@@ -106,6 +106,8 @@ export const nb: Messages = {
   planedIn: (max, trim) => `høvles i emner ≤ ${max}, kapp ${trim} per ende`,
   printKerf: (kerf) => `snittbredde ${kerf}`,
   printFooter: 'cutlist · mål to ganger, kapp én gang',
+  printQr: 'Skann for å åpne prosjektet',
+  printQrTooLarge: 'For stort for en QR-kode — bruk Del for å sende lenken.',
 
   removed: (what) => `Fjernet ${what}.`,
   undo: 'Angre',
