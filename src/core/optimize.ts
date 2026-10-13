@@ -124,9 +124,15 @@ export function optimizeMaterial(
       if (!best || compareScores(planingScore(result), planingScore(best)) < 0) best = result;
     }
     const chosen = best!;
-    let n = 0;
-    for (const bin of chosen.bins) for (const placed of bin.items) placed.item.label = `B${++n}`;
-    for (const blank of chosen.unplaced) blank.label = `B${++n}`;
+    // Identical blanks share a label so repeated boards and blanks can be listed once.
+    const labels = new Map<string, string>();
+    const label = (blank: Blank) => {
+      const key = `${blank.length}|${blank.parts.map((p) => `${p.item.ref}:${p.item.length}`).join(',')}`;
+      if (!labels.has(key)) labels.set(key, `B${labels.size + 1}`);
+      blank.label = labels.get(key)!;
+    };
+    for (const bin of chosen.bins) for (const placed of bin.items) label(placed.item);
+    for (const blank of chosen.unplaced) label(blank);
     boards = chosen.bins;
     blanks = chosen.bins.flatMap((b) => b.items.map((p) => p.item));
     missing = chosen.unplaced.flatMap((blank) =>

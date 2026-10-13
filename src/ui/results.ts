@@ -248,7 +248,9 @@ function materialView(mr: MaterialResult, material: Material, project: Project, 
     ),
   ];
 
-  const boards = mr.boards.map((bin, i) => boardView(bin, i, view));
+  const boards = groupBy(mr.boards, boardKey).map(({ item, count }, i) =>
+    boardView(item, count, i, view),
+  );
   const stats = copy.materialStats(mr.stats.boards, fmtPct(mr.stats.wastePct));
 
   return h(
@@ -266,13 +268,33 @@ function materialView(mr: MaterialResult, material: Material, project: Project, 
           h('h3', { class: 'step' }, h('span', { class: 'step-no' }, '1'), copy.stepRough),
           boards,
           h('h3', { class: 'step' }, h('span', { class: 'step-no' }, '2'), copy.stepPlane),
-          mr.blanks.map((blank) => blankView(blank, view)),
+          groupBy(mr.blanks, (b) => b.label).map(({ item, count }) => blankView(item, count, view)),
         ]
       : boards,
   );
 }
 
-function boardView(bin: Bin<PackItem | Blank>, index: number, view: View) {
+/** Collapses identical items, keeping first-seen order. */
+function groupBy<T>(items: T[], key: (item: T) => string): { item: T; count: number }[] {
+  const groups = new Map<string, { item: T; count: number }>();
+  for (const item of items) {
+    const k = key(item);
+    const group = groups.get(k);
+    if (group) group.count++;
+    else groups.set(k, { item, count: 1 });
+  }
+  return [...groups.values()];
+}
+
+const boardKey = (bin: Bin<PackItem | Blank>) =>
+  `${bin.stockLength}|${bin.items.map((p) => (isBlank(p.item) ? p.item.label : `${p.item.ref}:${p.item.length}`)).join(',')}`;
+
+const headLength = (count: number, length: string) => [
+  count > 1 && h('strong', { class: 'times' }, `${count} × `),
+  length,
+];
+
+function boardView(bin: Bin<PackItem | Blank>, count: number, index: number, view: View) {
   const fmt = (l: Length) => fmtLength(l, view.units);
   const segments: Segment[] = [];
   for (const placed of bin.items) {
@@ -297,7 +319,13 @@ function boardView(bin: Bin<PackItem | Blank>, index: number, view: View) {
     h(
       'div',
       { class: 'board-head' },
-      h('span', {}, h('strong', {}, `#${index + 1}`), ` · ${fmt(bin.stockLength)}`),
+      h(
+        'span',
+        {},
+        h('strong', {}, `#${index + 1}`),
+        ' · ',
+        headLength(count, fmt(bin.stockLength)),
+      ),
       bin.offcut > 0 && h('span', { class: 'muted' }, `${copy.offcut} ${fmt(bin.offcut)}`),
     ),
     bar(bin.stockLength, segments, copy.boardLabel(index + 1, fmt(bin.stockLength))),
@@ -326,7 +354,7 @@ function blankContents(blank: Blank, view: View): string {
     .join(' + ');
 }
 
-function blankView(blank: Blank, view: View) {
+function blankView(blank: Blank, count: number, view: View) {
   const fmt = (l: Length) => fmtLength(l, view.units);
   const segments: Segment[] = [];
   if (blank.trimPerEnd > 0)
@@ -363,7 +391,7 @@ function blankView(blank: Blank, view: View) {
     h(
       'div',
       { class: 'board-head' },
-      h('span', {}, h('strong', {}, blank.label), ` · ${fmt(blank.length)}`),
+      h('span', {}, h('strong', {}, blank.label), ' · ', headLength(count, fmt(blank.length))),
       blank.oversize && h('span', { class: 'flag' }, copy.oversize),
     ),
     bar(blank.length, segments, copy.blankLabel(blank.label, fmt(blank.length))),

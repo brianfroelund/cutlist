@@ -109,3 +109,12 @@ test.describe('in Danish', () => {
     await expect(page.getByRole('button', { name: 'Add part' })).toBeVisible();
   });
 });
+
+test('identical boards are listed once', async ({ page, isMobile }) => {
+  await page.goto('./');
+  await addPart(page, 'Leg', '700', '6');
+  await showResults(page, isMobile);
+  await expect(page.getByTestId('total-boards')).toHaveText('2');
+  await expect(page.getByTestId('board')).toHaveCount(1);
+  await expect(page.getByTestId('board')).toContainText('2 × 2400 mm');
+});

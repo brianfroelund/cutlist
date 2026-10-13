@@ -13,7 +13,7 @@ import { looksLikeTable, parsePastedParts } from '../core/paste';
 import { attachSwipe } from './delight/swipe';
 import { h } from './dom';
 import { countField, lengthField, textField } from './fields';
-import { copy, isLocaleCode, LANGUAGES, locale, setLocale } from './i18n';
+import { copy } from './i18n';
 import { icon } from './icons';
 import type { ChangeOptions, Store } from './store';
 
@@ -100,22 +100,6 @@ function settingsCard(project: Project, ctx: InputsContext) {
       },
       label,
     );
-  const language = h(
-    'select',
-    {
-      class: 'select',
-      'aria-label': copy.language,
-      onChange: (e: Event) => {
-        const value = (e.target as HTMLSelectElement).value;
-        if (!isLocaleCode(value) || value === locale) return;
-        setLocale(value);
-        window.location.reload();
-      },
-    },
-    Object.entries(LANGUAGES).map(([code, name]) =>
-      h('option', { value: code, selected: code === locale }, name),
-    ),
-  );
   return h(
     'section',
     { class: 'card settings', 'aria-label': copy.settings },
@@ -141,7 +125,6 @@ function settingsCard(project: Project, ctx: InputsContext) {
         focus: 'kerf',
         onCommit: (v) => ctx.store.change((p) => (p.kerf = v ?? 0)),
       }),
-      h('label', { class: 'field' }, h('span', { class: 'field-label' }, copy.language), language),
     ),
     h('p', { class: 'hint' }, copy.kerfHint),
   );

@@ -20,7 +20,7 @@ describe('planing workflow', () => {
     expect(result.blanks).not.toBeNull();
     expect(result.blanks!.map((b) => b.length)).toEqual([mm(1123), mm(1123)]);
     expect(result.boards).toHaveLength(1);
-    expect(result.blanks!.map((b) => b.label)).toEqual(['B1', 'B2']);
+    expect(result.blanks!.map((b) => b.label)).toEqual(['B1', 'B1']);
     const blank = result.blanks![0]!;
     expect(blank.parts.map((p) => p.offset)).toEqual([mm(10), mm(563)]);
   });

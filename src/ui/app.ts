@@ -1,6 +1,6 @@
 import { createProject, exampleProject, hasParts, type Project } from '../core/model';
 import type { OptimizeResult } from '../core/optimize';
-import { copy } from './i18n';
+import { copy, isLocaleCode, LANGUAGES, locale, setLocale } from './i18n';
 import { setFaviconBusy } from './delight/favicon';
 import { sawdustBurst } from './delight/sawdust';
 import { installBlade } from './delight/blade';
@@ -194,6 +194,23 @@ export function startApp(root: HTMLElement): void {
   tip.addEventListener('click', nextTip);
   nextTip();
 
+  // Language follows the browser; this quiet footer override is remembered.
+  const language = h(
+    'select',
+    {
+      class: 'footer-language',
+      'aria-label': copy.language,
+      onChange: () => {
+        if (!isLocaleCode(language.value) || language.value === locale) return;
+        setLocale(language.value);
+        window.location.reload();
+      },
+    },
+    Object.entries(LANGUAGES).map(([code, name]) =>
+      h('option', { value: code, selected: code === locale }, name),
+    ),
+  );
+
   const toasts = h('div', { class: 'toasts', 'aria-live': 'polite' });
   mountToasts(toasts);
 
@@ -205,6 +222,7 @@ export function startApp(root: HTMLElement): void {
       { class: 'footer' },
       tip,
       h('a', { href: 'https://github.com/brianfroelund/cutlist', rel: 'noopener' }, copy.source),
+      language,
     ),
     h(
       'nav',
