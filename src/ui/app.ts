@@ -313,9 +313,19 @@ export function startApp(root: HTMLElement): void {
     run();
   });
 
-  installBlade(brandMark, (tidy) =>
-    toast(copy.sawn, { action: { label: copy.tidyUp, run: tidy }, timeout: 8000 }),
-  );
+  let closeTidyToast: (() => void) | null = null;
+  installBlade(brandMark, {
+    onSawn: (tidy) => {
+      closeTidyToast ??= toast(copy.sawn, {
+        sticky: true,
+        action: { label: copy.tidyUp, run: tidy },
+      });
+    },
+    onTidy: () => {
+      closeTidyToast?.();
+      closeTidyToast = null;
+    },
+  });
 
   setTab('inputs');
   renderInputs(inputsPanel, inputsCtx);

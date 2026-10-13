@@ -69,11 +69,18 @@ function clip(poly: Point[], p: Point, n: Point, sign: number): Point[] {
   return out;
 }
 
+export interface BladeCallbacks {
+  /** Something was sawn during a drag. */
+  onSawn(tidy: () => void): void;
+  /** Everything was put back. */
+  onTidy(): void;
+}
+
 /**
  * Drag the brand blade across the page to saw elements in half; the halves fall away.
  * Purely visual: originals are only hidden, and `tidy` brings them back.
  */
-export function installBlade(handle: HTMLElement, onSawn: (tidy: () => void) => void): void {
+export function installBlade(handle: HTMLElement, callbacks: BladeCallbacks): void {
   const layer = h('div', { class: 'saw-layer', 'aria-hidden': 'true' });
   const blade = h('div', { class: 'saw-blade', 'aria-hidden': 'true' }, icon('blade'));
   const sawn: HTMLElement[] = [];
@@ -86,6 +93,7 @@ export function installBlade(handle: HTMLElement, onSawn: (tidy: () => void) => 
   let lastTick = 0;
 
   const tidy = () => {
+    callbacks.onTidy();
     for (const el of sawn.splice(0)) {
       el.style.visibility = '';
       delete el.dataset.sawn;
@@ -231,9 +239,17 @@ export function installBlade(handle: HTMLElement, onSawn: (tidy: () => void) => 
   const end = () => {
     if (!dragging) return;
     dragging = false;
+    window.removeEventListener('pointermove', move);
+    window.removeEventListener('pointerup', end);
+    window.removeEventListener('pointercancel', end);
+    window.removeEventListener('blur', end);
     document.body.classList.remove('sawing');
     const home = handle.getBoundingClientRect();
     const target = { x: home.left + home.width / 2, y: home.top + home.height / 2 };
+    const done = () => {
+      blade.remove();
+      handle.classList.remove('dragging');
+    };
     blade
       .animate(
         [
@@ -242,17 +258,13 @@ export function installBlade(handle: HTMLElement, onSawn: (tidy: () => void) => 
         ],
         { duration: 380, easing: 'cubic-bezier(.5,0,.2,1)' },
       )
-      .finished.finally(() => {
-        blade.remove();
-        handle.classList.remove('dragging');
-      });
-    if (cutThisDrag) onSawn(tidy);
+      .finished.then(done, done);
+    if (cutThisDrag) callbacks.onSawn(tidy);
   };
 
   handle.addEventListener('pointerdown', (e) => {
-    if (reducedMotion() || e.button !== 0) return;
+    if (reducedMotion() || e.button !== 0 || dragging) return;
     e.preventDefault();
-    handle.setPointerCapture(e.pointerId);
     dragging = true;
     cutThisDrag = false;
     last = { x: e.clientX, y: e.clientY };
@@ -261,13 +273,17 @@ export function installBlade(handle: HTMLElement, onSawn: (tidy: () => void) => 
     document.body.classList.add('sawing');
     handle.classList.add('dragging');
     place(last);
+    // Listen on window: the hidden handle can't be relied on to receive the release.
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+    window.addEventListener('blur', end);
   });
-  handle.addEventListener('pointermove', move);
-  handle.addEventListener('pointerup', end);
-  handle.addEventListener('pointercancel', end);
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && sawn.length) tidy();
+    if (e.key !== 'Escape') return;
+    end();
+    if (sawn.length) tidy();
   });
   window.addEventListener('beforeprint', tidy);
 }
