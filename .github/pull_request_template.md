@@ -10,4 +10,4 @@
 - [ ] Checked on phone (≈375 px) and laptop (≈1280 px) widths
 - [ ] Print preview still looks right (greyscale, one material per page)
 - [ ] Docs updated (SPEC / ALGORITHM / DESIGN / ROADMAP / ADR) where relevant
-- [ ] User-facing text added to `src/ui/copy.ts`
+- [ ] User-facing text added to `src/ui/i18n/en.ts` and translated in every locale

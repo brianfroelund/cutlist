@@ -60,7 +60,7 @@ export function expandParts(material: Material): PackItem[] {
       ? Array.from({ length: Math.max(0, Math.floor(part.quantity)) }, (_, i) => ({
           id: `${part.id}#${i}`,
           ref: part.id,
-          label: part.label.trim() || 'Part',
+          label: part.label.trim(),
           length: part.length,
         }))
       : [],
@@ -69,6 +69,18 @@ export function expandParts(material: Material): PackItem[] {
 
 const partLengthOf = (item: PackItem): Length =>
   isBlank(item) ? item.parts.reduce((sum, p) => sum + p.item.length, 0) : item.length;
+
+/** Like scorePack, but before the offcut tie-break prefer fewer (so longer) rough-cut blanks. */
+function planingScore(result: PackResult<Blank>): number[] {
+  const [unplaced, stockLength, boards, offcut] = scorePack(result) as [
+    number,
+    number,
+    number,
+    number,
+  ];
+  const blanks = result.bins.reduce((sum, b) => sum + b.items.length, 0);
+  return [unplaced, stockLength, boards, blanks, offcut];
+}
 
 function groupUnplaced(entries: { item: PackItem; reason: UnplacedReason }[]): Unplaced[] {
   const groups = new Map<string, Unplaced>();
@@ -109,7 +121,7 @@ export function optimizeMaterial(
       options,
     )) {
       const result = pack(set, stock, kerf, options);
-      if (!best || compareScores(scorePack(result), scorePack(best)) < 0) best = result;
+      if (!best || compareScores(planingScore(result), planingScore(best)) < 0) best = result;
     }
     const chosen = best!;
     let n = 0;

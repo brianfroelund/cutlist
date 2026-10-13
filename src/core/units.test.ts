@@ -10,6 +10,9 @@ describe('parseLength (mm)', () => {
     ['1.2m', 12000],
     ['120 cm', 12000],
     ['0', 0],
+    ['1.200,5', 12005],
+    ['1,200.5', 12005],
+    ['1 200', 12000],
   ])('%s → %d', (input, expected) => expect(parseLength(input, 'mm')).toBe(expected));
 
   it.each(['', 'abc', '-5', '12..3', '1/2'])('rejects %j', (input) =>
@@ -21,6 +24,7 @@ describe('parseLength (in)', () => {
   it.each([
     ['48', inches(48)],
     ['48.5', inches(48.5)],
+    ['48,5', inches(48.5)],
     ['48 1/2', inches(48.5)],
     ['48-1/2"', inches(48.5)],
     ['1/16', inches(1 / 16)],

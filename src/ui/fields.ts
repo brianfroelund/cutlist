@@ -1,6 +1,7 @@
 import type { Length, UnitSystem } from '../core/model';
 import { formatLength, parseLength } from '../core/units';
 import { h } from './dom';
+import { localizeNumber } from './i18n';
 
 type Parsed<T> = { ok: true; value: T } | { ok: false };
 
@@ -62,7 +63,7 @@ const baseInput = (o: FieldOptions<unknown>, value: string, inputmode: string) =
 export function lengthField(
   o: FieldOptions<Length | null> & { units: UnitSystem; allowZero?: boolean },
 ) {
-  const format = (v: Length | null) => (v === null ? '' : formatLength(v, o.units));
+  const format = (v: Length | null) => (v === null ? '' : localizeNumber(formatLength(v, o.units)));
   const input = baseInput(o, format(o.value), o.units === 'mm' ? 'decimal' : 'text');
   bind(
     input,

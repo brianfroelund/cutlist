@@ -29,7 +29,7 @@ Each result gets a score tuple, compared lexicographically (lower is better):
 1. `inner = planingLength − 2 × trim`. Parts longer than `inner` become single oversize blanks.
 2. Pack the other parts into "virtual boards" of length `inner` (unlimited quantity) with `packCandidates`. Keep up to 6 distinct groupings, plus the one-part-per-blank grouping.
 3. Each blank is `trim + Σparts + kerfs between + trim` long. Part offsets inside start at `trim`.
-4. `optimize.ts` packs each blank set onto real stock and keeps the best score. Blanks are then numbered B1… in board order.
+4. `optimize.ts` packs each blank set onto real stock and keeps the best score. The score is the usual one, but the blank count comes before the offcut tie-break: `[unplaced, stock length, boards, blanks, −largest offcut]`. This makes the rough cuts as few and as long as the planing length allows. Blanks are then numbered B1… in board order.
 
 Useful length (for waste %) counts final parts only, so trims and blank kerfs count as waste.
 

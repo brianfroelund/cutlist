@@ -8,7 +8,7 @@ Candidates, roughly in priority order. Move an item into SPEC.md when you implem
 - [ ] PNG icons (192/512) for better install support on iOS and Android.
 - [ ] Per-part "grain/defect" notes shown on the cut list.
 - [ ] Reorder parts and materials (drag handle and keyboard).
-- [ ] CSV paste: paste rows from a spreadsheet into the parts table.
+- [ ] Right-to-left languages (Arabic, Hebrew) and per-language URLs for search engines.
 
 ## Later
 
@@ -16,7 +16,7 @@ Candidates, roughly in priority order. Move an item into SPEC.md when you implem
 - [ ] Joint optimization of planing blanks and rough stock, instead of the candidate search.
 - [ ] Width/thickness awareness: ripping several parts from one wide board.
 - [ ] Several projects in local storage with a project switcher.
-- [ ] Localized UI (Danish first) and locale-aware decimal input.
+- [ ] Native-speaker review of the machine-written translations.
 - [ ] Sheet goods (2D) — probably a separate mode or app.
 
 ## Done

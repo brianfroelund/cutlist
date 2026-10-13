@@ -9,7 +9,7 @@ async function addPart(page: Page, label: string, length: string, qty: string) {
 }
 
 async function showResults(page: Page, isMobile: boolean) {
-  if (isMobile) await page.getByRole('tab', { name: /Cutlist/ }).click();
+  if (isMobile) await page.getByRole('tab', { name: /Cutlist|Skæreliste/ }).click();
 }
 
 test('builds a cutlist that survives a reload', async ({ page, isMobile }) => {
@@ -65,4 +65,47 @@ test('undo restores a removed part', async ({ page }) => {
   await expect(page.getByTestId('part-row')).toHaveCount(0);
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect(page.getByTestId('part-row')).toHaveCount(1);
+});
+
+test('pasting spreadsheet rows adds parts', async ({ page, isMobile }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Add part' }).first().click();
+  await page
+    .getByTestId('part-row')
+    .last()
+    .getByRole('textbox', { name: 'Part', exact: true })
+    .focus();
+  await page.evaluate((text) => {
+    const data = new DataTransfer();
+    data.setData('text/plain', text);
+    document.activeElement!.dispatchEvent(
+      new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
+    );
+  }, 'Name\tLength\tQty\nLeg\t700\t6\nRail\t500\t4\n');
+  await expect(page.getByTestId('part-row')).toHaveCount(2);
+  await expect(page.getByText('Added 2 parts')).toBeVisible();
+  await showResults(page, isMobile);
+  await expect(page.getByTestId('total-boards')).toHaveText('3');
+});
+
+test.describe('in Danish', () => {
+  test.use({ locale: 'da-DK' });
+
+  test('speaks Danish and reads decimal commas', async ({ page, isMobile }) => {
+    await page.goto('./');
+    await expect(page.getByRole('button', { name: 'Tilføj del' })).toBeVisible();
+    await page.getByRole('button', { name: 'Tilføj del' }).click();
+    const row = page.getByTestId('part-row').last();
+    await row.getByRole('textbox', { name: 'Længde', exact: true }).fill('1100,5');
+    await row.getByRole('textbox', { name: 'Antal', exact: true }).fill('2');
+    await showResults(page, isMobile);
+    await expect(page.getByTestId('total-boards')).toHaveText('1');
+    await expect(page.locator('.cut-text').first()).toContainText('1100,5 mm');
+  });
+
+  test('can switch language', async ({ page }) => {
+    await page.goto('./');
+    await page.getByRole('combobox', { name: 'Sprog' }).selectOption('en');
+    await expect(page.getByRole('button', { name: 'Add part' })).toBeVisible();
+  });
 });

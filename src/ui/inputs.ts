@@ -9,10 +9,11 @@ import {
   type StockItem,
   type UnitSystem,
 } from '../core/model';
-import { copy } from './copy';
+import { looksLikeTable, parsePastedParts } from '../core/paste';
 import { attachSwipe } from './delight/swipe';
 import { h } from './dom';
 import { countField, lengthField, textField } from './fields';
+import { copy, isLocaleCode, LANGUAGES, locale, setLocale } from './i18n';
 import { icon } from './icons';
 import type { ChangeOptions, Store } from './store';
 
@@ -20,6 +21,7 @@ export interface InputsContext {
   store: Store;
   onRemoved(what: string, snapshot: Project): void;
   onFocusMaterial(id: string): void;
+  onPasted(added: number, skipped: number, snapshot: Project): void;
 }
 
 export function renderInputs(root: HTMLElement, ctx: InputsContext, focus?: string): void {
@@ -31,14 +33,14 @@ export function renderInputs(root: HTMLElement, ctx: InputsContext, focus?: stri
       'button',
       { type: 'button', class: 'btn btn-dashed', onClick: () => addMaterial(ctx.store) },
       icon('plus'),
-      'Add material',
+      copy.addMaterial,
     ),
   );
   if (focus) root.querySelector<HTMLElement>(`[data-focus="${CSS.escape(focus)}"]`)?.focus();
 }
 
 export function addMaterial(store: Store): void {
-  const material = createMaterial(`Material ${store.get().materials.length + 1}`);
+  const material = createMaterial(copy.newMaterialName(store.get().materials.length + 1));
   store.change((p) => p.materials.push(material), {
     structure: true,
     focus: `${material.id}:name`,
@@ -51,6 +53,35 @@ export function addPart(store: Store, materialId: string): void {
     structure: true,
     focus: `${part.id}:label`,
   });
+}
+
+/** Adds pasted spreadsheet rows to a material; an empty row at `atPartId` is replaced. */
+export function pasteParts(
+  ctx: InputsContext,
+  materialId: string,
+  text: string,
+  atPartId?: string,
+) {
+  const snapshot = ctx.store.get();
+  const { parts, skipped } = parsePastedParts(text, snapshot.units);
+  if (parts.length === 0) {
+    ctx.onPasted(0, skipped, snapshot);
+    return;
+  }
+  const created = parts.map((p) => createPart(p.label, p.length, p.quantity));
+  ctx.store.change(
+    (p) => {
+      const material = p.materials.find((m) => m.id === materialId);
+      if (!material) return;
+      const index = material.parts.findIndex((x) => x.id === atPartId);
+      const at = material.parts[index];
+      const replace = at !== undefined && !at.label.trim() && at.length === 0;
+      if (index < 0) material.parts.push(...created);
+      else material.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+    },
+    { structure: true, focus: `${created[created.length - 1]!.id}:label` },
+  );
+  ctx.onPasted(created.length, skipped, snapshot);
 }
 
 function settingsCard(project: Project, ctx: InputsContext) {
@@ -69,31 +100,48 @@ function settingsCard(project: Project, ctx: InputsContext) {
       },
       label,
     );
+  const language = h(
+    'select',
+    {
+      class: 'select',
+      'aria-label': copy.language,
+      onChange: (e: Event) => {
+        const value = (e.target as HTMLSelectElement).value;
+        if (!isLocaleCode(value) || value === locale) return;
+        setLocale(value);
+        window.location.reload();
+      },
+    },
+    Object.entries(LANGUAGES).map(([code, name]) =>
+      h('option', { value: code, selected: code === locale }, name),
+    ),
+  );
   return h(
     'section',
-    { class: 'card settings', 'aria-label': 'Project settings' },
+    { class: 'card settings', 'aria-label': copy.settings },
     h(
       'div',
       { class: 'settings-grid' },
       h(
         'div',
         { class: 'field' },
-        h('span', { class: 'field-label', id: 'units-label' }, 'Units'),
+        h('span', { class: 'field-label', id: 'units-label' }, copy.units),
         h(
           'div',
           { class: 'segmented', role: 'radiogroup', 'aria-labelledby': 'units-label' },
           unit('mm', 'mm'),
-          unit('in', 'inches'),
+          unit('in', copy.inches),
         ),
       ),
       lengthField({
-        label: 'Saw kerf',
+        label: copy.kerf,
         value: project.kerf,
         units: project.units,
         allowZero: true,
         focus: 'kerf',
         onCommit: (v) => ctx.store.change((p) => (p.kerf = v ?? 0)),
       }),
+      h('label', { class: 'field' }, h('span', { class: 'field-label' }, copy.language), language),
     ),
     h('p', { class: 'hint' }, copy.kerfHint),
   );
@@ -122,59 +170,69 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
       'stock',
       [
         lengthField({
-          label: 'Length',
+          label: copy.length,
           value: s.length || null,
           units,
           focus: `${s.id}:length`,
           onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.length = v ?? 0))),
         }),
         countField({
-          label: 'Qty',
+          label: copy.qty,
           value: s.quantity,
           placeholder: '∞',
           focus: `${s.id}:qty`,
           onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.quantity = v))),
         }),
       ],
-      'board length',
-      () => remove('a board length', (t) => (t.stock = t.stock.filter((x) => x.id !== s.id))),
+      copy.removeBoard,
+      () => remove(copy.aBoardLength, (t) => (t.stock = t.stock.filter((x) => x.id !== s.id))),
       addStock,
     );
 
-  const partRow = (part: Part) =>
-    row(
+  const partRow = (part: Part) => {
+    const el = row(
       'part',
       [
         textField({
-          label: 'Part',
+          label: copy.part,
           value: part.label,
-          placeholder: 'e.g. Leg',
+          placeholder: copy.partPlaceholder,
           focus: `${part.id}:label`,
           onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.label = v))),
         }),
         lengthField({
-          label: 'Length',
+          label: copy.length,
           value: part.length || null,
           units,
           focus: `${part.id}:length`,
           onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.length = v ?? 0))),
         }),
         countField({
-          label: 'Qty',
+          label: copy.qty,
           value: part.quantity,
           focus: `${part.id}:qty`,
           onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.quantity = v ?? 0))),
         }),
       ],
-      'part',
+      copy.removePart,
       () => {
         const label = currentMaterial()?.parts.find((x) => x.id === part.id)?.label;
-        remove(label ? `“${label}”` : 'a part', (t) => {
+        remove(label ? `“${label}”` : copy.aPart, (t) => {
           t.parts = t.parts.filter((x) => x.id !== part.id);
         });
       },
       () => addPart(ctx.store, m.id),
     );
+    // A single value pastes normally; rows or columns become new parts.
+    el.addEventListener('paste', (e) => {
+      const text = e.clipboardData?.getData('text/plain');
+      if (!text || !looksLikeTable(text)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      pasteParts(ctx, m.id, text, part.id);
+    });
+    return el;
+  };
 
   const planing = m.planingLength !== null;
 
@@ -193,7 +251,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
         class: 'material-name',
         value: m.name,
         maxlength: 120,
-        'aria-label': 'Material name',
+        'aria-label': copy.materialName,
         'data-focus': `${m.id}:name`,
         onInput: (e: Event) => edit((t) => (t.name = (e.target as HTMLInputElement).value)),
       }),
@@ -202,36 +260,37 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
         {
           type: 'button',
           class: 'btn btn-ghost btn-icon',
-          'aria-label': 'Remove material',
+          'aria-label': copy.removeMaterial,
           onClick: () => {
             const snapshot = ctx.store.get();
             const name = currentMaterial()?.name;
             ctx.store.change((p) => (p.materials = p.materials.filter((x) => x.id !== m.id)), {
               structure: true,
             });
-            ctx.onRemoved(name ? `“${name}”` : 'the material', snapshot);
+            ctx.onRemoved(name ? `“${name}”` : copy.theMaterial, snapshot);
           },
         },
         icon('x'),
       ),
     ),
     section(
-      'Stock',
+      copy.stock,
       copy.stockHint,
       'stock',
-      ['Length', 'Qty'],
+      [copy.length, copy.qty],
       m.stock.map(stockRow),
-      'Add board length',
+      copy.addBoard,
       addStock,
     ),
     section(
-      'Parts',
+      copy.parts,
       copy.partsHint,
       'part',
-      ['Part', 'Length', 'Qty'],
+      [copy.part, copy.length, copy.qty],
       m.parts.map(partRow),
-      'Add part',
+      copy.addPart,
       () => addPart(ctx.store, m.id),
+      copy.pasteHint,
     ),
     h(
       'div',
@@ -255,7 +314,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
           'div',
           { class: 'planing-fields' },
           lengthField({
-            label: 'Planing length',
+            label: copy.planingLength,
             value: m.planingLength,
             units,
             focus: `${m.id}:planing`,
@@ -264,7 +323,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
             },
           }),
           lengthField({
-            label: 'Trim per end',
+            label: copy.trimPerEnd,
             value: m.trimPerEnd,
             units,
             allowZero: true,
@@ -290,6 +349,7 @@ function section(
   rows: HTMLElement[],
   addLabel: string,
   onAdd: () => void,
+  footnote?: string,
 ) {
   return h(
     'section',
@@ -303,13 +363,14 @@ function section(
       ),
     h('div', { class: 'rows' }, rows),
     h('button', { type: 'button', class: 'btn btn-add', onClick: onAdd }, icon('plus'), addLabel),
+    footnote && h('p', { class: 'hint paste-hint' }, footnote),
   );
 }
 
 function row(
   kind: 'stock' | 'part',
   fields: HTMLElement[],
-  name: string,
+  removeLabel: string,
   onRemove: () => void,
   onEnterLast: () => void,
 ) {
@@ -322,7 +383,7 @@ function row(
       {
         type: 'button',
         class: 'btn btn-ghost btn-icon remove',
-        'aria-label': `Remove ${name}`,
+        'aria-label': removeLabel,
         onClick: onRemove,
       },
       icon('x'),

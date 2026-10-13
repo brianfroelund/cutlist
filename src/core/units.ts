@@ -13,17 +13,29 @@ export function inches(value: number): Length {
 
 const NUMBER = /^\d*\.?\d+$/;
 
+/** "1.200,5" / "1,200.5" → "1200.5"; a lone comma is a decimal comma. */
+function normalizeDecimal(raw: string): string {
+  const lastComma = raw.lastIndexOf(',');
+  const lastDot = raw.lastIndexOf('.');
+  if (lastComma >= 0 && lastDot >= 0) {
+    const decimal = lastComma > lastDot ? ',' : '.';
+    const thousands = decimal === ',' ? '.' : ',';
+    return raw.split(thousands).join('').replace(',', '.');
+  }
+  return raw.replace(',', '.');
+}
+
 function parseMetric(text: string): number | null {
   const match = text.replace(/\s+/g, '').match(/^([\d.,]+)(mm|cm|m)?$/);
   if (!match) return null;
-  const raw = match[1]!.replace(',', '.');
+  const raw = normalizeDecimal(match[1]!);
   if (!NUMBER.test(raw)) return null;
   const factor = match[2] === 'm' ? 1000 : match[2] === 'cm' ? 10 : 1;
   return Number(raw) * factor;
 }
 
 function parseInchPart(text: string): number | null {
-  const rest = text.replace(/(″|"|in(ches)?)$/, '').trim();
+  const rest = normalizeDecimal(text.replace(/(″|"|in(ches)?)$/, '').trim());
   if (!rest) return 0;
   if (NUMBER.test(rest)) return Number(rest);
   const mixed = rest.match(/^(?:(\d+(?:\.\d+)?)(?:\s+|\s*-\s*))?(\d+)\s*\/\s*(\d+)$/);

@@ -1,0 +1,142 @@
+import type { Messages } from './en';
+
+export const pt: Messages = {
+  projectName: 'Nome do projeto',
+  defaultProjectName: 'Meu projeto',
+  defaultMaterialName: 'Pinho 45×95',
+  newMaterialName: (n) => `Material ${n}`,
+  share: 'Partilhar',
+  print: 'Imprimir',
+  export: 'Exportar',
+  import: 'Importar',
+  keyboardShortcuts: 'Atalhos de teclado',
+  gotIt: 'Entendi',
+  shortcutNewPart: 'Nova peça',
+  shortcutNewMaterial: 'Novo material',
+  shortcutShare: 'Copiar link de partilha',
+  shortcutPrint: 'Imprimir',
+  shortcutExport: 'Exportar ficheiro',
+  shortcutEnter: 'Próxima linha (adiciona uma no fim)',
+  shortcutPaste: 'Colar peças de uma folha de cálculo',
+  shortcutHelp: 'Esta ajuda',
+  shortcutEsc: 'Arrumar depois da lâmina',
+  tabInputs: 'Material e peças',
+  tabResults: 'Plano de corte',
+  view: 'Vista',
+  projectActions: 'Projeto',
+  anotherTip: 'Outra dica',
+  source: 'Código-fonte',
+
+  settings: 'Definições do projeto',
+  units: 'Unidades',
+  inches: 'polegadas',
+  kerf: 'Largura de corte',
+  kerfHint:
+    'Espessura da lâmina. 3 mm serve para a maioria das serras de bancada; lâminas finas ficam perto de 2,4 mm.',
+  language: 'Idioma',
+
+  materialName: 'Nome do material',
+  removeMaterial: 'Remover material',
+  addMaterial: 'Adicionar material',
+  stock: 'Material',
+  stockHint: 'tábuas que tem',
+  parts: 'Peças',
+  partsHint: 'o que precisa',
+  length: 'Comprimento',
+  qty: 'Qtd.',
+  part: 'Peça',
+  material: 'Material',
+  partPlaceholder: 'ex. Perna',
+  addBoard: 'Adicionar comprimento de tábua',
+  addPart: 'Adicionar peça',
+  removeBoard: 'Remover comprimento de tábua',
+  removePart: 'Remover peça',
+  aBoardLength: 'um comprimento de tábua',
+  aPart: 'uma peça',
+  theMaterial: 'o material',
+  pasteHint:
+    'Dica: cole linhas diretamente de uma folha de cálculo — nome, comprimento, quantidade.',
+  planingToggle: 'Cortar primeiro em bruto em peças para aplainar',
+  planingHint:
+    'As peças são agrupadas em troços não mais compridos que o comprimento de aplainamento. A sobra cobre a marca da plaina e o corte em esquadria em cada ponta.',
+  planingLength: 'Comprimento de aplainamento',
+  trimPerEnd: 'Sobra por ponta',
+
+  emptyTitle: 'Ainda nada para cortar',
+  emptyBody:
+    'Adicione as tábuas que tem e as peças de que precisa. As contas ficam por nossa conta.',
+  loadExample: 'Mostre-me um exemplo',
+  exampleLoaded: 'Exemplo carregado — uma pequena bancada robusta.',
+  example: {
+    project: 'Bancada',
+    pine: 'Pinho 45×95',
+    oak: 'Carvalho 26×160, em bruto',
+    leg: 'Perna',
+    longRail: 'Travessa longa',
+    shortRail: 'Travessa curta',
+    drawerFront: 'Frente de gaveta',
+    shelf: 'Prateleira',
+  },
+  summary: 'Resumo',
+  ofStock: 'de material',
+  waste: 'de desperdício',
+  boards: (n) => (n === 1 ? 'tábua' : 'tábuas'),
+  materialStats: (boards, pct) =>
+    `${boards} ${boards === 1 ? 'tábua' : 'tábuas'} · ${pct}% de desperdício`,
+  wasteVerdict(pct, shown) {
+    if (pct <= 2) return `Só ${shown}% de desperdício. A sua serração vai sentir a sua falta.`;
+    if (pct <= 8) return `${shown}% de desperdício — trabalho limpo.`;
+    if (pct <= 20)
+      return `${shown}% de desperdício. Guarde as sobras; caixinhas também precisam de madeira.`;
+    return `${shown}% de desperdício. Talvez outros comprimentos de tábua sirvam melhor.`;
+  },
+  unplacedVerdict: (n) =>
+    `${n} ${n === 1 ? 'peça ainda não tem' : 'peças ainda não têm'} lugar — veja abaixo.`,
+  tooLong: (part, length, longest) =>
+    `${part} (${length}) é mais comprida que a sua tábua mais comprida (${longest}). Nem uma serra muito boa ajuda aqui.`,
+  outOfStock: (count, part) =>
+    `Acabaram as tábuas para ${count} × ${part}. Adicione material ou aumente uma quantidade.`,
+  noStock: 'Adicione pelo menos um comprimento de tábua para cortar.',
+  kerfLarge: 'Essa largura de corte passa dos 20 mm. Motosserra? (Verifique as unidades.)',
+  planingTooShort: 'O comprimento de aplainamento tem de ser maior que as duas sobras juntas.',
+  stepRough: 'Corte em bruto',
+  stepPlane: 'Aplainar e depois cortar os troços em peças',
+  oversize: 'Mais comprida que o comprimento de aplainamento',
+  offcut: 'sobra',
+  trim: 'Sobra',
+  boardLabel: (n, length) => `Tábua ${n}, ${length}`,
+  blankLabel: (name, length) => `Troço ${name}, ${length}`,
+  partsList: 'Lista de peças',
+  total: 'Total',
+  planedIn: (max, trim) => `aplainado em troços ≤ ${max}, sobra ${trim} por ponta`,
+  printKerf: (kerf) => `largura de corte ${kerf}`,
+  printFooter: 'cutlist · medir duas vezes, cortar uma',
+
+  removed: (what) => `Removido: ${what}.`,
+  undo: 'Desfazer',
+  saved: 'Guardado',
+  linkCopied: 'Link copiado — envie-o a quem segura a outra ponta da tábua.',
+  copyPrompt: 'Copie este link:',
+  imported: (name) => `Aberto “${name}”.`,
+  importFailed: 'Esse ficheiro não parece um projeto cutlist.',
+  confirmShared: (name) =>
+    `Abrir o projeto partilhado “${name}”? Substitui o que tem aberto (exporte-o primeiro se o quiser manter).`,
+  pasted: (n, skipped) =>
+    `${n} ${n === 1 ? 'peça adicionada' : 'peças adicionadas'}${skipped ? ` (${skipped} ${skipped === 1 ? 'linha ilegível ignorada' : 'linhas ilegíveis ignoradas'})` : ''}.`,
+  pasteNothing: 'Não foram encontradas peças. Colunas esperadas: nome, comprimento, quantidade.',
+  celebrate: 'Quase zero desperdício. Faça uma vénia.',
+  bladeTitle: 'Agarre a lâmina e arraste-a pela página',
+  sawn: 'Serradura por todo o lado. O seu projeto está intacto.',
+  tidyUp: 'Arrumar',
+
+  tips: [
+    'Medir duas vezes, cortar uma.',
+    'Corte primeiro as peças mais compridas — são as mais difíceis de tirar depois.',
+    'Escreva o comprimento em cada sobra. O seu eu do futuro agradece.',
+    'A marca da plaina acontece. É para isso que serve a sobra.',
+    'Uma lâmina afiada é uma lâmina segura.',
+    'Prima ? para ver os atalhos de teclado.',
+    'A madeira em bruto mexe quando é cortada. Deixe-a descansar antes da medida final.',
+    'Pode colar uma lista de peças diretamente de uma folha de cálculo.',
+  ],
+};

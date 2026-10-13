@@ -1,0 +1,144 @@
+import type { Messages } from './en';
+
+/** Polish plurals: 1 → one, 2–4 (not 12–14) → few, otherwise many. */
+const plural = (n: number, one: string, few: string, many: string) =>
+  n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? few : many;
+
+export const pl: Messages = {
+  projectName: 'Nazwa projektu',
+  defaultProjectName: 'Mój projekt',
+  defaultMaterialName: 'Sosna 45×95',
+  newMaterialName: (n) => `Materiał ${n}`,
+  share: 'Udostępnij',
+  print: 'Drukuj',
+  export: 'Eksportuj',
+  import: 'Importuj',
+  keyboardShortcuts: 'Skróty klawiszowe',
+  gotIt: 'Rozumiem',
+  shortcutNewPart: 'Nowy element',
+  shortcutNewMaterial: 'Nowy materiał',
+  shortcutShare: 'Kopiuj link do udostępnienia',
+  shortcutPrint: 'Drukuj',
+  shortcutExport: 'Eksportuj plik',
+  shortcutEnter: 'Następny wiersz (dodaje nowy na końcu)',
+  shortcutPaste: 'Wklej elementy z arkusza kalkulacyjnego',
+  shortcutHelp: 'Ta pomoc',
+  shortcutEsc: 'Posprzątaj po tarczy',
+  tabInputs: 'Materiał i elementy',
+  tabResults: 'Lista cięć',
+  view: 'Widok',
+  projectActions: 'Projekt',
+  anotherTip: 'Kolejna wskazówka',
+  source: 'Kod źródłowy',
+
+  settings: 'Ustawienia projektu',
+  units: 'Jednostki',
+  inches: 'cale',
+  kerf: 'Szerokość rzazu',
+  kerfHint:
+    'Grubość tarczy. 3 mm pasuje do większości pił stołowych; cienkie tarcze mają bliżej 2,4 mm.',
+  language: 'Język',
+
+  materialName: 'Nazwa materiału',
+  removeMaterial: 'Usuń materiał',
+  addMaterial: 'Dodaj materiał',
+  stock: 'Materiał',
+  stockHint: 'deski, które masz',
+  parts: 'Elementy',
+  partsHint: 'czego potrzebujesz',
+  length: 'Długość',
+  qty: 'Ilość',
+  part: 'Element',
+  material: 'Materiał',
+  partPlaceholder: 'np. Noga',
+  addBoard: 'Dodaj długość deski',
+  addPart: 'Dodaj element',
+  removeBoard: 'Usuń długość deski',
+  removePart: 'Usuń element',
+  aBoardLength: 'długość deski',
+  aPart: 'element',
+  theMaterial: 'materiał',
+  pasteHint: 'Wskazówka: wklej wiersze prosto z arkusza kalkulacyjnego — nazwa, długość, ilość.',
+  planingToggle: 'Najpierw zgrubnie przytnij na odcinki do strugania',
+  planingHint:
+    'Elementy są grupowane w odcinki nie dłuższe niż długość strugania. Naddatek pokrywa wyrwy od strugarki i cięcie pod kątem prostym na każdym końcu.',
+  planingLength: 'Długość strugania',
+  trimPerEnd: 'Naddatek na koniec',
+
+  emptyTitle: 'Jeszcze nie ma czego ciąć',
+  emptyBody:
+    'Dodaj deski, które masz, i elementy, których potrzebujesz. Obliczenia bierzemy na siebie.',
+  loadExample: 'Pokaż przykład',
+  exampleLoaded: 'Wczytano przykład — mały, solidny stół warsztatowy.',
+  example: {
+    project: 'Stół warsztatowy',
+    pine: 'Sosna 45×95',
+    oak: 'Dąb 26×160, surowy',
+    leg: 'Noga',
+    longRail: 'Długa oskrzynia',
+    shortRail: 'Krótka oskrzynia',
+    drawerFront: 'Front szuflady',
+    shelf: 'Półka',
+  },
+  summary: 'Podsumowanie',
+  ofStock: 'materiału',
+  waste: 'odpadu',
+  boards: (n) => plural(n, 'deska', 'deski', 'desek'),
+  materialStats: (boards, pct) =>
+    `${boards} ${plural(boards, 'deska', 'deski', 'desek')} · ${pct}% odpadu`,
+  wasteVerdict(pct, shown) {
+    if (pct <= 2) return `Tylko ${shown}% odpadu. Twój skład drewna będzie za tobą tęsknił.`;
+    if (pct <= 8) return `${shown}% odpadu — porządna robota.`;
+    if (pct <= 20) return `${shown}% odpadu. Zachowaj ścinki; małe pudełka też potrzebują drewna.`;
+    return `${shown}% odpadu. Może inne długości desek pasowałyby lepiej.`;
+  },
+  unplacedVerdict: (n) =>
+    `${n} ${plural(n, 'element wciąż nie ma', 'elementy wciąż nie mają', 'elementów wciąż nie ma')} miejsca — zobacz niżej.`,
+  tooLong: (part, length, longest) =>
+    `${part} (${length}) jest dłuższy niż twoja najdłuższa deska (${longest}). Tu nie pomoże nawet bardzo dobra piła.`,
+  outOfStock: (count, part) =>
+    `Zabrakło desek na ${count} × ${part}. Dodaj materiał albo zwiększ ilość.`,
+  noStock: 'Dodaj przynajmniej jedną długość deski do cięcia.',
+  kerfLarge: 'Ten rzaz ma ponad 20 mm. Piła łańcuchowa? (Sprawdź jednostki.)',
+  planingTooShort: 'Długość strugania musi być większa niż oba naddatki razem.',
+  stepRough: 'Cięcie zgrubne',
+  stepPlane: 'Wystrugaj, potem potnij odcinki na elementy',
+  oversize: 'Dłuższy niż długość strugania',
+  offcut: 'ścinek',
+  trim: 'Naddatek',
+  boardLabel: (n, length) => `Deska ${n}, ${length}`,
+  blankLabel: (name, length) => `Odcinek ${name}, ${length}`,
+  partsList: 'Lista elementów',
+  total: 'Razem',
+  planedIn: (max, trim) => `strugane w odcinkach ≤ ${max}, naddatek ${trim} na koniec`,
+  printKerf: (kerf) => `rzaz ${kerf}`,
+  printFooter: 'cutlist · dwa razy mierz, raz tnij',
+
+  removed: (what) => `Usunięto: ${what}.`,
+  undo: 'Cofnij',
+  saved: 'Zapisano',
+  linkCopied: 'Link skopiowany — wyślij go temu, kto trzyma drugi koniec deski.',
+  copyPrompt: 'Skopiuj ten link:',
+  imported: (name) => `Otwarto „${name}”.`,
+  importFailed: 'Ten plik nie wygląda na projekt cutlist.',
+  confirmShared: (name) =>
+    `Otworzyć udostępniony projekt „${name}”? Zastąpi on obecnie otwarty (najpierw go wyeksportuj, jeśli chcesz go zachować).`,
+  pasted: (n, skipped) =>
+    `Dodano ${n} ${plural(n, 'element', 'elementy', 'elementów')}${skipped ? ` (pominięto ${skipped} ${plural(skipped, 'nieczytelny wiersz', 'nieczytelne wiersze', 'nieczytelnych wierszy')})` : ''}.`,
+  pasteNothing: 'Nie znaleziono żadnych elementów. Oczekiwane kolumny: nazwa, długość, ilość.',
+  celebrate: 'Prawie zero odpadu. Ukłon!',
+  bladeTitle: 'Chwyć tarczę i przeciągnij ją po stronie',
+  sawn: 'Wszędzie trociny. Twój projekt jest nietknięty.',
+  tidyUp: 'Posprzątaj',
+
+  tips: [
+    'Dwa razy mierz, raz tnij.',
+    'Najpierw tnij najdłuższe elementy — później najtrudniej je wykroić.',
+    'Zapisz długość na każdym ścinku. Przyszły ty podziękuje.',
+    'Wyrwy od strugarki się zdarzają. Po to jest naddatek.',
+    'Ostra tarcza to bezpieczna tarcza.',
+    'Naciśnij ?, aby zobaczyć skróty klawiszowe.',
+    'Surowe drewno pracuje przy cięciu. Daj mu odpocząć przed wymiarem końcowym.',
+    'Możesz wkleić listę elementów prosto z arkusza kalkulacyjnego.',
+  ],
+};

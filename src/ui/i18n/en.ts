@@ -1,0 +1,147 @@
+/**
+ * English — the source catalogue. Every other locale must have the same keys (the typecheck enforces it).
+ * Tone: plainspoken and warm, like a friendly shop teacher. See docs/DESIGN.md.
+ */
+export const en = {
+  // App chrome
+  projectName: 'Project name',
+  defaultProjectName: 'My project',
+  defaultMaterialName: 'Pine 45×95',
+  newMaterialName: (n: number) => `Material ${n}`,
+  share: 'Share',
+  print: 'Print',
+  export: 'Export',
+  import: 'Import',
+  keyboardShortcuts: 'Keyboard shortcuts',
+  gotIt: 'Got it',
+  shortcutNewPart: 'New part',
+  shortcutNewMaterial: 'New material',
+  shortcutShare: 'Copy share link',
+  shortcutPrint: 'Print',
+  shortcutExport: 'Export file',
+  shortcutEnter: 'Next row (adds one at the end)',
+  shortcutPaste: 'Paste parts from a spreadsheet',
+  shortcutHelp: 'This help',
+  shortcutEsc: 'Tidy up after the saw blade',
+  tabInputs: 'Stock & parts',
+  tabResults: 'Cutlist',
+  view: 'View',
+  projectActions: 'Project',
+  anotherTip: 'Another tip',
+  source: 'Source',
+
+  // Settings
+  settings: 'Project settings',
+  units: 'Units',
+  inches: 'inches',
+  kerf: 'Saw kerf',
+  kerfHint: 'Blade width. 3 mm suits most table saws; thin-kerf blades are closer to 2.4 mm.',
+  language: 'Language',
+
+  // Materials, stock and parts
+  materialName: 'Material name',
+  removeMaterial: 'Remove material',
+  addMaterial: 'Add material',
+  stock: 'Stock',
+  stockHint: 'boards you have',
+  parts: 'Parts',
+  partsHint: 'what you need',
+  length: 'Length',
+  qty: 'Qty',
+  part: 'Part',
+  material: 'Material',
+  partPlaceholder: 'e.g. Leg',
+  addBoard: 'Add board length',
+  addPart: 'Add part',
+  removeBoard: 'Remove board length',
+  removePart: 'Remove part',
+  aBoardLength: 'a board length',
+  aPart: 'a part',
+  theMaterial: 'the material',
+  pasteHint: 'Tip: paste rows straight from a spreadsheet — name, length, quantity.',
+  planingToggle: 'Rough-cut into planing blanks first',
+  planingHint:
+    'Parts are grouped into blanks no longer than the planing length. Trim covers snipe and the squaring cut at each end.',
+  planingLength: 'Planing length',
+  trimPerEnd: 'Trim per end',
+
+  // Results
+  emptyTitle: 'Nothing to cut yet',
+  emptyBody: 'Add the boards you have and the parts you need. The arithmetic is on us.',
+  loadExample: 'Show me an example',
+  exampleLoaded: 'Example loaded — a sturdy little workbench.',
+  example: {
+    project: 'Workbench',
+    pine: 'Pine 45×95',
+    oak: 'Oak 26×160, rough',
+    leg: 'Leg',
+    longRail: 'Long rail',
+    shortRail: 'Short rail',
+    drawerFront: 'Drawer front',
+    shelf: 'Shelf',
+  },
+  summary: 'Summary',
+  ofStock: 'of stock',
+  waste: 'waste',
+  boards: (n: number): string => (n === 1 ? 'board' : 'boards'),
+  materialStats: (boards: number, pct: string) =>
+    `${boards} ${boards === 1 ? 'board' : 'boards'} · ${pct}% waste`,
+  wasteVerdict(pct: number, shown: string): string {
+    if (pct <= 2) return `Only ${shown}% waste. Your lumberyard will miss you.`;
+    if (pct <= 8) return `${shown}% waste — tidy work.`;
+    if (pct <= 20) return `${shown}% waste. Keep the offcuts; small boxes need wood too.`;
+    return `${shown}% waste. Different stock lengths might fit better.`;
+  },
+  unplacedVerdict: (n: number) =>
+    `${n} ${n === 1 ? 'part still needs' : 'parts still need'} a home — see below.`,
+  tooLong: (part: string, length: string, longest: string) =>
+    `${part} (${length}) is longer than your longest board (${longest}). Even a very good saw can't help here.`,
+  outOfStock: (count: number, part: string) =>
+    `Ran out of boards for ${count} × ${part}. Add more stock or raise a quantity.`,
+  noStock: 'Add at least one board length to cut from.',
+  kerfLarge: 'That kerf is over 20 mm. Chainsaw? (Check the units.)',
+  planingTooShort: 'The planing length must be longer than both trims together.',
+  stepRough: 'Rough cut',
+  stepPlane: 'Plane, then cut blanks to parts',
+  oversize: 'Longer than the planing length',
+  offcut: 'offcut',
+  trim: 'Trim',
+  boardLabel: (n: number, length: string) => `Board ${n}, ${length}`,
+  blankLabel: (name: string, length: string) => `Blank ${name}, ${length}`,
+  partsList: 'Parts list',
+  total: 'Total',
+  planedIn: (max: string, trim: string) => `planed in blanks ≤ ${max}, trim ${trim} per end`,
+  printKerf: (kerf: string) => `kerf ${kerf}`,
+  printFooter: 'cutlist · measure twice, cut once',
+
+  // Messages
+  removed: (what: string) => `Removed ${what}.`,
+  undo: 'Undo',
+  saved: 'Saved',
+  linkCopied: "Link copied — send it to whoever's holding the other end of the board.",
+  copyPrompt: 'Copy this link:',
+  imported: (name: string) => `Opened “${name}”.`,
+  importFailed: "That file doesn't look like a cutlist project.",
+  confirmShared: (name: string) =>
+    `Open the shared project “${name}”? It replaces what you have open now (export it first if you want to keep it).`,
+  pasted: (n: number, skipped: number) =>
+    `Added ${n} ${n === 1 ? 'part' : 'parts'}${skipped ? ` (skipped ${skipped} unreadable ${skipped === 1 ? 'row' : 'rows'})` : ''}.`,
+  pasteNothing: "Couldn't find any parts in that. Expected columns: name, length, quantity.",
+  celebrate: 'Near-zero waste. Take a bow.',
+  bladeTitle: 'Grab the blade and drag it across the page',
+  sawn: 'Sawdust everywhere. Your project is untouched.',
+  tidyUp: 'Tidy up',
+
+  tips: [
+    'Measure twice, cut once.',
+    'Cut the longest parts first — they’re the hardest to find later.',
+    'Write the length on every offcut. Future you says thanks.',
+    'Snipe happens. That’s what trim allowance is for.',
+    'A sharp blade is a safe blade.',
+    'Press ? for keyboard shortcuts.',
+    'Rough lumber moves when it is cut. Let it rest before final dimensioning.',
+    'You can paste a parts list straight from a spreadsheet.',
+  ],
+};
+
+export type Messages = typeof en;

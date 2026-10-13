@@ -1,0 +1,142 @@
+import type { Messages } from './en';
+
+export const it: Messages = {
+  projectName: 'Nome del progetto',
+  defaultProjectName: 'Il mio progetto',
+  defaultMaterialName: 'Pino 45×95',
+  newMaterialName: (n) => `Materiale ${n}`,
+  share: 'Condividi',
+  print: 'Stampa',
+  export: 'Esporta',
+  import: 'Importa',
+  keyboardShortcuts: 'Scorciatoie da tastiera',
+  gotIt: 'Capito',
+  shortcutNewPart: 'Nuovo pezzo',
+  shortcutNewMaterial: 'Nuovo materiale',
+  shortcutShare: 'Copia il link di condivisione',
+  shortcutPrint: 'Stampa',
+  shortcutExport: 'Esporta file',
+  shortcutEnter: 'Riga successiva (ne aggiunge una in fondo)',
+  shortcutPaste: 'Incolla pezzi da un foglio di calcolo',
+  shortcutHelp: 'Questo aiuto',
+  shortcutEsc: 'Rimetti in ordine dopo la lama',
+  tabInputs: 'Materiale e pezzi',
+  tabResults: 'Distinta di taglio',
+  view: 'Vista',
+  projectActions: 'Progetto',
+  anotherTip: 'Un altro consiglio',
+  source: 'Codice sorgente',
+
+  settings: 'Impostazioni del progetto',
+  units: 'Unità',
+  inches: 'pollici',
+  kerf: 'Spessore di taglio',
+  kerfHint:
+    'Spessore della lama. 3 mm va bene per la maggior parte delle seghe da banco; le lame sottili sono più vicine a 2,4 mm.',
+  language: 'Lingua',
+
+  materialName: 'Nome del materiale',
+  removeMaterial: 'Rimuovi materiale',
+  addMaterial: 'Aggiungi materiale',
+  stock: 'Materiale',
+  stockHint: 'le tavole che hai',
+  parts: 'Pezzi',
+  partsHint: 'quello che ti serve',
+  length: 'Lunghezza',
+  qty: 'Q.tà',
+  part: 'Pezzo',
+  material: 'Materiale',
+  partPlaceholder: 'es. Gamba',
+  addBoard: 'Aggiungi lunghezza tavola',
+  addPart: 'Aggiungi pezzo',
+  removeBoard: 'Rimuovi lunghezza tavola',
+  removePart: 'Rimuovi pezzo',
+  aBoardLength: 'una lunghezza di tavola',
+  aPart: 'un pezzo',
+  theMaterial: 'il materiale',
+  pasteHint:
+    'Consiglio: incolla righe direttamente da un foglio di calcolo — nome, lunghezza, quantità.',
+  planingToggle: 'Prima taglia grezzo in sbozzi da piallare',
+  planingHint:
+    'I pezzi vengono raggruppati in sbozzi non più lunghi della lunghezza di piallatura. Lo scarto copre il segno della pialla e il taglio a squadra a ogni estremità.',
+  planingLength: 'Lunghezza di piallatura',
+  trimPerEnd: 'Scarto per estremità',
+
+  emptyTitle: 'Ancora niente da tagliare',
+  emptyBody: 'Aggiungi le tavole che hai e i pezzi che ti servono. Ai conti pensiamo noi.',
+  loadExample: 'Mostrami un esempio',
+  exampleLoaded: 'Esempio caricato — un piccolo banco da lavoro bello robusto.',
+  example: {
+    project: 'Banco da lavoro',
+    pine: 'Pino 45×95',
+    oak: 'Rovere 26×160, grezzo',
+    leg: 'Gamba',
+    longRail: 'Traversa lunga',
+    shortRail: 'Traversa corta',
+    drawerFront: 'Frontale cassetto',
+    shelf: 'Ripiano',
+  },
+  summary: 'Riepilogo',
+  ofStock: 'di materiale',
+  waste: 'di scarto',
+  boards: (n) => (n === 1 ? 'tavola' : 'tavole'),
+  materialStats: (boards, pct) =>
+    `${boards} ${boards === 1 ? 'tavola' : 'tavole'} · ${pct}% di scarto`,
+  wasteVerdict(pct, shown) {
+    if (pct <= 2)
+      return `Solo ${shown}% di scarto. Il tuo fornitore di legname sentirà la tua mancanza.`;
+    if (pct <= 8) return `${shown}% di scarto — lavoro pulito.`;
+    if (pct <= 20)
+      return `${shown}% di scarto. Tieni gli avanzi; anche le scatoline hanno bisogno di legno.`;
+    return `${shown}% di scarto. Forse altre lunghezze di tavola andrebbero meglio.`;
+  },
+  unplacedVerdict: (n) =>
+    `${n} ${n === 1 ? 'pezzo non ha' : 'pezzi non hanno'} ancora un posto — vedi sotto.`,
+  tooLong: (part, length, longest) =>
+    `${part} (${length}) è più lungo della tua tavola più lunga (${longest}). Nemmeno un'ottima sega può aiutarti.`,
+  outOfStock: (count, part) =>
+    `Tavole finite per ${count} × ${part}. Aggiungi materiale o aumenta una quantità.`,
+  noStock: 'Aggiungi almeno una lunghezza di tavola da cui tagliare.',
+  kerfLarge: 'Quello spessore di taglio supera i 20 mm. Motosega? (Controlla le unità.)',
+  planingTooShort: 'La lunghezza di piallatura deve superare i due scarti messi insieme.',
+  stepRough: 'Taglio grezzo',
+  stepPlane: 'Pialla, poi taglia gli sbozzi nei pezzi',
+  oversize: 'Più lungo della lunghezza di piallatura',
+  offcut: 'avanzo',
+  trim: 'Scarto',
+  boardLabel: (n, length) => `Tavola ${n}, ${length}`,
+  blankLabel: (name, length) => `Sbozzo ${name}, ${length}`,
+  partsList: 'Elenco pezzi',
+  total: 'Totale',
+  planedIn: (max, trim) => `piallato in sbozzi ≤ ${max}, scarto ${trim} per estremità`,
+  printKerf: (kerf) => `spessore di taglio ${kerf}`,
+  printFooter: 'cutlist · misura due volte, taglia una volta',
+
+  removed: (what) => `Rimosso ${what}.`,
+  undo: 'Annulla',
+  saved: 'Salvato',
+  linkCopied: "Link copiato — mandalo a chi tiene l'altra estremità della tavola.",
+  copyPrompt: 'Copia questo link:',
+  imported: (name) => `Aperto «${name}».`,
+  importFailed: 'Quel file non sembra un progetto cutlist.',
+  confirmShared: (name) =>
+    `Aprire il progetto condiviso «${name}»? Sostituisce quello aperto ora (esportalo prima se vuoi tenerlo).`,
+  pasted: (n, skipped) =>
+    `${n === 1 ? 'Aggiunto 1 pezzo' : `Aggiunti ${n} pezzi`}${skipped ? ` (${skipped} ${skipped === 1 ? 'riga illeggibile saltata' : 'righe illeggibili saltate'})` : ''}.`,
+  pasteNothing: 'Nessun pezzo trovato. Colonne attese: nome, lunghezza, quantità.',
+  celebrate: 'Scarto quasi zero. Inchino!',
+  bladeTitle: 'Afferra la lama e trascinala sulla pagina',
+  sawn: 'Segatura dappertutto. Il tuo progetto è intatto.',
+  tidyUp: 'Rimetti in ordine',
+
+  tips: [
+    'Misura due volte, taglia una volta.',
+    'Taglia prima i pezzi più lunghi — dopo sono i più difficili da ricavare.',
+    'Scrivi la lunghezza su ogni avanzo. Il te del futuro ringrazia.',
+    'Il segno della pialla capita. Per questo c’è lo scarto.',
+    'Una lama affilata è una lama sicura.',
+    'Premi ? per le scorciatoie da tastiera.',
+    'Il legno grezzo si muove quando lo tagli. Lascialo riposare prima della misura finale.',
+    'Puoi incollare un elenco di pezzi direttamente da un foglio di calcolo.',
+  ],
+};

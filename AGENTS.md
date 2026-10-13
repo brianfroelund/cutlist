@@ -50,7 +50,7 @@ docs/         spec, architecture, algorithm, design, roadmap, ADRs
 2. **`src/core` stays pure and deterministic.** Randomness must come from `seededRandom`, so the same input always gives the same result.
 3. **Never use `innerHTML` with data.** Build DOM with `h()` from `src/ui/dom.ts` (text becomes text nodes). Static SVG constants in `icons.ts` are the only exception.
 4. **Untrusted input** (imported files, share links, localStorage) must go through `parseProject` in `src/core/serialize.ts`. If you change the schema, bump `SCHEMA_VERSION` and add a step to `migrate()`, plus a test.
-5. **All user-facing text lives in `src/ui/copy.ts`.** Follow the tone in DESIGN.md.
+5. **All user-facing text lives in `src/ui/i18n/`.** Add new keys to `en.ts` first (the source catalogue), then to every other locale; the typecheck fails if one is missing. Never hard-code UI strings. Follow the tone in DESIGN.md.
 6. **Mobile and desktop are equal citizens.** Check at 375 px and 1280 px. Touch targets are at least 44 px, and inputs are 16 px (no iOS zoom).
 7. **Print is greyscale.** Parts are told apart by pattern, never by color.
 8. **Respect `prefers-reduced-motion`.** Every animation must degrade to none.

@@ -25,6 +25,23 @@ describe('planing workflow', () => {
     expect(blank.parts.map((p) => p.offset)).toEqual([mm(10), mm(563)]);
   });
 
+  it('groups parts into as few blanks as fit the planing length', () => {
+    const m = planed(
+      [
+        [850, 4],
+        [1600, 2],
+      ],
+      1800,
+      20,
+      4200,
+    );
+    const result = optimizeMaterial(m, mm(3));
+    const legBlanks = result.blanks!.filter((b) => b.parts[0]!.item.length === mm(850));
+    expect(legBlanks).toHaveLength(2);
+    expect(legBlanks.every((b) => b.parts.length === 2)).toBe(true);
+    expect(result.blanks!.every((b) => b.length <= mm(1800))).toBe(true);
+  });
+
   it('counts parts (not blanks) as useful length', () => {
     const result = optimizeMaterial(planed([[550, 4]], 1200, 10), mm(3));
     expect(result.stats.partLength).toBe(mm(2200));

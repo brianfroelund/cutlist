@@ -1,0 +1,142 @@
+import type { Messages } from './en';
+
+export const es: Messages = {
+  projectName: 'Nombre del proyecto',
+  defaultProjectName: 'Mi proyecto',
+  defaultMaterialName: 'Pino 45×95',
+  newMaterialName: (n) => `Material ${n}`,
+  share: 'Compartir',
+  print: 'Imprimir',
+  export: 'Exportar',
+  import: 'Importar',
+  keyboardShortcuts: 'Atajos de teclado',
+  gotIt: 'Entendido',
+  shortcutNewPart: 'Nueva pieza',
+  shortcutNewMaterial: 'Nuevo material',
+  shortcutShare: 'Copiar enlace para compartir',
+  shortcutPrint: 'Imprimir',
+  shortcutExport: 'Exportar archivo',
+  shortcutEnter: 'Siguiente fila (añade una al final)',
+  shortcutPaste: 'Pegar piezas desde una hoja de cálculo',
+  shortcutHelp: 'Esta ayuda',
+  shortcutEsc: 'Recoger después de la hoja de sierra',
+  tabInputs: 'Material y piezas',
+  tabResults: 'Lista de cortes',
+  view: 'Vista',
+  projectActions: 'Proyecto',
+  anotherTip: 'Otro consejo',
+  source: 'Código fuente',
+
+  settings: 'Ajustes del proyecto',
+  units: 'Unidades',
+  inches: 'pulgadas',
+  kerf: 'Ancho de corte',
+  kerfHint:
+    'Grosor de la hoja. 3 mm sirve para la mayoría de sierras de mesa; las hojas finas rondan los 2,4 mm.',
+  language: 'Idioma',
+
+  materialName: 'Nombre del material',
+  removeMaterial: 'Quitar material',
+  addMaterial: 'Añadir material',
+  stock: 'Material',
+  stockHint: 'tablas que tienes',
+  parts: 'Piezas',
+  partsHint: 'lo que necesitas',
+  length: 'Longitud',
+  qty: 'Cant.',
+  part: 'Pieza',
+  material: 'Material',
+  partPlaceholder: 'p. ej. Pata',
+  addBoard: 'Añadir largo de tabla',
+  addPart: 'Añadir pieza',
+  removeBoard: 'Quitar largo de tabla',
+  removePart: 'Quitar pieza',
+  aBoardLength: 'un largo de tabla',
+  aPart: 'una pieza',
+  theMaterial: 'el material',
+  pasteHint:
+    'Consejo: pega filas directamente desde una hoja de cálculo — nombre, longitud, cantidad.',
+  planingToggle: 'Primero cortar en bruto a piezas para cepillar',
+  planingHint:
+    'Las piezas se agrupan en tramos no más largos que la longitud de cepillado. El recorte cubre el mordido de la cepilladora y el corte a escuadra en cada extremo.',
+  planingLength: 'Longitud de cepillado',
+  trimPerEnd: 'Recorte por extremo',
+
+  emptyTitle: 'Nada que cortar todavía',
+  emptyBody:
+    'Añade las tablas que tienes y las piezas que necesitas. Las cuentas corren de nuestra parte.',
+  loadExample: 'Muéstrame un ejemplo',
+  exampleLoaded: 'Ejemplo cargado — un banco de trabajo pequeño y robusto.',
+  example: {
+    project: 'Banco de trabajo',
+    pine: 'Pino 45×95',
+    oak: 'Roble 26×160, en bruto',
+    leg: 'Pata',
+    longRail: 'Travesaño largo',
+    shortRail: 'Travesaño corto',
+    drawerFront: 'Frente de cajón',
+    shelf: 'Estante',
+  },
+  summary: 'Resumen',
+  ofStock: 'de material',
+  waste: 'de desperdicio',
+  boards: (n) => (n === 1 ? 'tabla' : 'tablas'),
+  materialStats: (boards, pct) =>
+    `${boards} ${boards === 1 ? 'tabla' : 'tablas'} · ${pct} % de desperdicio`,
+  wasteVerdict(pct, shown) {
+    if (pct <= 2) return `Solo ${shown} % de desperdicio. Tu maderera te va a echar de menos.`;
+    if (pct <= 8) return `${shown} % de desperdicio — trabajo limpio.`;
+    if (pct <= 20)
+      return `${shown} % de desperdicio. Guarda los retales; las cajitas también necesitan madera.`;
+    return `${shown} % de desperdicio. Quizá otros largos de tabla encajen mejor.`;
+  },
+  unplacedVerdict: (n) =>
+    `${n} ${n === 1 ? 'pieza todavía no tiene' : 'piezas todavía no tienen'} sitio — mira abajo.`,
+  tooLong: (part, length, longest) =>
+    `${part} (${length}) es más larga que tu tabla más larga (${longest}). Ni la mejor sierra puede ayudar aquí.`,
+  outOfStock: (count, part) =>
+    `No quedan tablas para ${count} × ${part}. Añade material o sube una cantidad.`,
+  noStock: 'Añade al menos un largo de tabla del que cortar.',
+  kerfLarge: 'Ese ancho de corte supera los 20 mm. ¿Motosierra? (Revisa las unidades.)',
+  planingTooShort: 'La longitud de cepillado debe ser mayor que los dos recortes juntos.',
+  stepRough: 'Corte en bruto',
+  stepPlane: 'Cepillar y luego cortar los tramos en piezas',
+  oversize: 'Más larga que la longitud de cepillado',
+  offcut: 'retal',
+  trim: 'Recorte',
+  boardLabel: (n, length) => `Tabla ${n}, ${length}`,
+  blankLabel: (name, length) => `Tramo ${name}, ${length}`,
+  partsList: 'Lista de piezas',
+  total: 'Total',
+  planedIn: (max, trim) => `cepillado en tramos ≤ ${max}, recorte ${trim} por extremo`,
+  printKerf: (kerf) => `ancho de corte ${kerf}`,
+  printFooter: 'cutlist · mide dos veces, corta una',
+
+  removed: (what) => `Se quitó ${what}.`,
+  undo: 'Deshacer',
+  saved: 'Guardado',
+  linkCopied: 'Enlace copiado — envíaselo a quien sujete el otro extremo de la tabla.',
+  copyPrompt: 'Copia este enlace:',
+  imported: (name) => `Se abrió «${name}».`,
+  importFailed: 'Ese archivo no parece un proyecto de cutlist.',
+  confirmShared: (name) =>
+    `¿Abrir el proyecto compartido «${name}»? Sustituye al que tienes abierto (expórtalo antes si quieres conservarlo).`,
+  pasted: (n, skipped) =>
+    `${n} ${n === 1 ? 'pieza añadida' : 'piezas añadidas'}${skipped ? ` (se omitieron ${skipped} ${skipped === 1 ? 'fila ilegible' : 'filas ilegibles'})` : ''}.`,
+  pasteNothing: 'No se encontraron piezas. Columnas esperadas: nombre, longitud, cantidad.',
+  celebrate: 'Casi nada de desperdicio. Haz una reverencia.',
+  bladeTitle: 'Agarra la hoja y arrástrala por la página',
+  sawn: 'Serrín por todas partes. Tu proyecto está intacto.',
+  tidyUp: 'Recoger',
+
+  tips: [
+    'Mide dos veces, corta una.',
+    'Corta primero las piezas más largas — luego son las más difíciles de sacar.',
+    'Escribe la longitud en cada retal. Tu yo del futuro te lo agradecerá.',
+    'El mordido de la cepilladora pasa. Para eso está el recorte.',
+    'Una hoja afilada es una hoja segura.',
+    'Pulsa ? para ver los atajos de teclado.',
+    'La madera en bruto se mueve al cortarla. Déjala reposar antes de llevarla a medida final.',
+    'Puedes pegar una lista de piezas directamente desde una hoja de cálculo.',
+  ],
+};

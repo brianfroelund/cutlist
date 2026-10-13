@@ -36,7 +36,7 @@ No controls are printed.
 
 ## Voice
 
-Plainspoken and warm, the way a friendly shop teacher talks. Use short sentences, and at most one gentle joke per message. Never make fun of the user. All copy is in `src/ui/copy.ts`.
+Plainspoken and warm, the way a friendly shop teacher talks. Use short sentences, and at most one gentle joke per message. Never make fun of the user. All copy is in `src/ui/i18n/`. Translations keep the same tone and use the local woodworking terms (e.g. Danish “snitbredde”, “høvlelængde”), not literal translations.
 
 ## Delight
 

@@ -28,6 +28,8 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 - S2. Kerf ≥ 0. Kerf over 20 mm shows a warning.
 - S3. A project can hold several materials; each is optimized independently.
 - S4. Empty, zero or invalid rows are ignored by the optimizer. Invalid fields are marked but never block other edits.
+- S8. Spreadsheet paste: pasting rows or columns into a part field, or anywhere outside a field, adds parts to that material. Paste into an empty row and the rows replace it. Columns are name, length, quantity. Tab, semicolon and comma separators work, as do quoted cells, a header row and `pcs`/`stk`/`x` quantity suffixes. Length + quantity or a single length column also works. Unreadable rows are skipped and counted. The paste can be undone.
+- S9. Languages: en, da, sv, nb, de, nl, fr, es, it, pt, pl, ja and zh. The language is detected from the browser, can be changed in project settings, and the choice is remembered. Numbers show the locale's decimal separator, and input accepts a decimal comma plus thousands separators (`1.200,5`).
 - S5. Enter in a row moves to the same field in the next row, or adds a new row from the last one.
 - S6. Removing anything shows an Undo toast. There are no confirmation dialogs for deletes.
 - S7. On touch devices a row can be swiped left to delete it.
@@ -44,7 +46,7 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 
 - S20. When enabled, parts are first grouped into blanks. Blank length = trim + parts + kerfs between parts + trim, and must be ≤ planing length.
 - S21. A part that alone exceeds the planing length becomes its own _oversize_ blank and is flagged.
-- S22. Blanks are then optimized onto stock like parts. Several blank groupings are tried and the one with the best stock result wins.
+- S22. Blanks are then optimized onto stock like parts. Several blank groupings are tried. The one with the best stock result wins; on a tie, the one with fewer (longer) blanks wins. The default planing length is 2200 mm.
 - S23. Output has two steps: (1) rough cut boards into blanks B1, B2, … (2) plane, then cut each blank into its parts.
 
 ### Output

@@ -342,7 +342,7 @@ a {
 
 .settings-grid {
   display: grid;
-  grid-template-columns: auto minmax(0, 180px);
+  grid-template-columns: auto minmax(0, 140px) minmax(0, 1fr);
   gap: var(--space-4);
   align-items: end;
 }
@@ -605,6 +605,10 @@ a {
 
   .settings-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .settings-grid > :last-child {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1151,4 +1155,26 @@ body.sawing * {
   margin: 48px auto;
   padding: 0 var(--space-4);
   color: var(--ink-soft);
+}
+
+.select {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--rule-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 18%, transparent);
+}
+
+.paste-hint {
+  margin-top: 0;
 }

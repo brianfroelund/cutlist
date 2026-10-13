@@ -2,11 +2,10 @@ import type { Length, Material, Project, UnitSystem } from '../core/model';
 import type { MaterialResult, OptimizeResult } from '../core/optimize';
 import type { Bin, PackItem } from '../core/pack';
 import { isBlank, type Blank } from '../core/planing';
-import { formatTotal, formatWithUnit } from '../core/units';
 import { validateProject, type Issue } from '../core/validate';
-import { copy } from './copy';
 import { captureRects, playFlip } from './delight/flip';
 import { h } from './dom';
+import { copy, fmtDate, fmtLength, fmtPct, fmtTotal } from './i18n';
 import { sawhorse } from './icons';
 
 export interface ResultsContext {
@@ -34,6 +33,7 @@ interface View {
 }
 
 const pct = (value: number, total: number) => `${((value / total) * 100).toFixed(3)}%`;
+const partName = (label: string) => label.trim() || copy.part;
 
 export function renderResults(
   root: HTMLElement,
@@ -59,7 +59,7 @@ export function renderResults(
               issues,
             ),
           ),
-          h('p', { class: 'print-only print-footer' }, 'cutlist · measure twice, cut once'),
+          h('p', { class: 'print-only print-footer' }, copy.printFooter),
         ]),
   );
   playFlip(root, before);
@@ -77,12 +77,15 @@ function emptyState(ctx: ResultsContext) {
 }
 
 function printHeader(project: Project) {
-  const date = new Date().toLocaleDateString(undefined, { dateStyle: 'long' });
   return h(
     'header',
     { class: 'print-only print-header' },
-    h('h1', {}, project.name || 'Cutlist'),
-    h('p', {}, `${date} · kerf ${formatWithUnit(project.kerf, project.units)}`),
+    h('h1', {}, project.name || 'cutlist'),
+    h(
+      'p',
+      {},
+      `${fmtDate(new Date())} · ${copy.printKerf(fmtLength(project.kerf, project.units))}`,
+    ),
   );
 }
 
@@ -106,18 +109,20 @@ function summary(
     );
   return h(
     'section',
-    { class: 'card summary', 'aria-label': 'Summary' },
+    { class: 'card summary', 'aria-label': copy.summary },
     h(
       'div',
       { class: 'stats' },
       stat(String(totals.boards), copy.boards(totals.boards), 'total-boards'),
-      stat(formatTotal(totals.stockLength, project.units), 'of stock'),
-      stat(`${totals.wastePct}%`, 'waste', 'total-waste'),
+      stat(fmtTotal(totals.stockLength, project.units), copy.ofStock),
+      stat(`${fmtPct(totals.wastePct)}%`, copy.waste, 'total-waste'),
     ),
     h(
       'p',
       { class: 'verdict' },
-      unplaced ? copy.unplacedVerdict(unplaced) : copy.wasteVerdict(totals.wastePct),
+      unplaced
+        ? copy.unplacedVerdict(unplaced)
+        : copy.wasteVerdict(totals.wastePct, fmtPct(totals.wastePct)),
     ),
     issues.some((i) => i.code === 'kerf-large') && h('p', { class: 'issue' }, copy.kerfLarge),
     h(
@@ -127,12 +132,12 @@ function summary(
         h(
           'li',
           {},
-          h('span', { class: 'shopping-name' }, mr.name || 'Material'),
+          h('span', { class: 'shopping-name' }, mr.name || copy.material),
           h(
             'span',
             { class: 'shopping-items' },
             mr.shopping
-              .map((s) => `${s.count} × ${formatWithUnit(s.length, project.units)}`)
+              .map((s) => `${s.count} × ${fmtLength(s.length, project.units)}`)
               .join(', ') || '—',
           ),
         ),
@@ -142,7 +147,7 @@ function summary(
 }
 
 function partsList(project: Project) {
-  const fmt = (l: Length) => formatWithUnit(l, project.units);
+  const fmt = (l: Length) => fmtLength(l, project.units);
   const materials = project.materials
     .map((m) => ({
       material: m,
@@ -153,8 +158,8 @@ function partsList(project: Project) {
     .filter((m) => m.parts.length > 0);
   return h(
     'section',
-    { class: 'print-only parts-list', 'aria-label': 'Parts list' },
-    h('h2', {}, 'Parts list'),
+    { class: 'print-only parts-list', 'aria-label': copy.partsList },
+    h('h2', {}, copy.partsList),
     materials.map(({ material, parts }) =>
       h(
         'table',
@@ -162,9 +167,9 @@ function partsList(project: Project) {
         h(
           'caption',
           {},
-          material.name || 'Material',
+          material.name || copy.material,
           material.planingLength !== null &&
-            ` · planed in blanks ≤ ${fmt(material.planingLength)}, trim ${fmt(material.trimPerEnd)} per end`,
+            ` · ${copy.planedIn(fmt(material.planingLength), fmt(material.trimPerEnd))}`,
         ),
         h(
           'thead',
@@ -173,9 +178,9 @@ function partsList(project: Project) {
             'tr',
             {},
             h('th', {}, ''),
-            h('th', {}, 'Part'),
-            h('th', {}, 'Length'),
-            h('th', {}, 'Qty'),
+            h('th', {}, copy.part),
+            h('th', {}, copy.length),
+            h('th', {}, copy.qty),
           ),
         ),
         h(
@@ -186,7 +191,7 @@ function partsList(project: Project) {
               'tr',
               {},
               h('td', {}, h('span', { class: 'swatch', 'data-pattern': pattern })),
-              h('td', {}, part.label.trim() || 'Part'),
+              h('td', {}, partName(part.label)),
               h('td', { class: 'num' }, fmt(part.length)),
               h('td', { class: 'num' }, part.quantity),
             ),
@@ -199,11 +204,11 @@ function partsList(project: Project) {
             'tr',
             {},
             h('td', {}, ''),
-            h('td', {}, 'Total'),
+            h('td', {}, copy.total),
             h(
               'td',
               { class: 'num' },
-              formatTotal(
+              fmtTotal(
                 parts.reduce((sum, { part }) => sum + part.length * part.quantity, 0),
                 project.units,
               ),
@@ -228,7 +233,7 @@ function materialView(mr: MaterialResult, material: Material, project: Project, 
     materialId: mr.materialId,
   };
   const longest = material.stock.reduce((max, s) => Math.max(max, s.length), 0);
-  const fmt = (l: Length) => formatWithUnit(l, project.units);
+  const fmt = (l: Length) => fmtLength(l, project.units);
 
   const messages = [
     ...issues
@@ -236,15 +241,15 @@ function materialView(mr: MaterialResult, material: Material, project: Project, 
       .map((i) => (i.code === 'no-stock' ? copy.noStock : copy.planingTooShort)),
     ...mr.unplaced.map((u) =>
       u.reason === 'too-long'
-        ? copy.tooLong(u.label, fmt(u.length), fmt(longest))
+        ? copy.tooLong(partName(u.label), fmt(u.length), fmt(longest))
         : u.reason === 'no-stock'
           ? copy.noStock
-          : copy.outOfStock(u.count, u.label),
+          : copy.outOfStock(u.count, partName(u.label)),
     ),
   ];
 
   const boards = mr.boards.map((bin, i) => boardView(bin, i, view));
-  const stats = `${mr.stats.boards} ${copy.boards(mr.stats.boards)} · ${mr.stats.wastePct}% waste`;
+  const stats = copy.materialStats(mr.stats.boards, fmtPct(mr.stats.wastePct));
 
   return h(
     'section',
@@ -252,7 +257,7 @@ function materialView(mr: MaterialResult, material: Material, project: Project, 
     h(
       'header',
       { class: 'result-head' },
-      h('h2', {}, mr.name || 'Material'),
+      h('h2', {}, mr.name || copy.material),
       h('span', { class: 'muted' }, stats),
     ),
     [...new Set(messages)].map((m) => h('p', { class: 'issue', role: 'note' }, m)),
@@ -268,18 +273,19 @@ function materialView(mr: MaterialResult, material: Material, project: Project, 
 }
 
 function boardView(bin: Bin<PackItem | Blank>, index: number, view: View) {
-  const fmt = (l: Length) => formatWithUnit(l, view.units);
+  const fmt = (l: Length) => fmtLength(l, view.units);
   const segments: Segment[] = [];
   for (const placed of bin.items) {
     const item = placed.item;
     const blank = isBlank(item);
+    const name = blank ? item.label : partName(item.label);
     segments.push({
       kind: blank ? 'blank' : 'piece',
       offset: placed.offset,
       length: item.length,
-      title: `${item.label} · ${fmt(item.length)}`,
-      primary: blank ? item.label : fmt(item.length),
-      secondary: blank ? fmt(item.length) : item.label,
+      title: `${name} · ${fmt(item.length)}`,
+      primary: blank ? name : fmt(item.length),
+      secondary: blank ? fmt(item.length) : name,
       pattern: blank ? undefined : view.patterns.get(item.ref),
       flip: `${view.materialId}:${item.id}`,
     });
@@ -294,7 +300,7 @@ function boardView(bin: Bin<PackItem | Blank>, index: number, view: View) {
       h('span', {}, h('strong', {}, `#${index + 1}`), ` · ${fmt(bin.stockLength)}`),
       bin.offcut > 0 && h('span', { class: 'muted' }, `${copy.offcut} ${fmt(bin.offcut)}`),
     ),
-    bar(bin.stockLength, segments, `Board ${index + 1}, ${fmt(bin.stockLength)}`),
+    bar(bin.stockLength, segments, copy.boardLabel(index + 1, fmt(bin.stockLength))),
     cutList(
       bin.items.map((p) =>
         isBlank(p.item)
@@ -306,7 +312,7 @@ function boardView(bin: Bin<PackItem | Blank>, index: number, view: View) {
           : {
               key: `${p.item.length}:${p.item.label}`,
               text: fmt(p.item.length),
-              detail: p.item.label,
+              detail: partName(p.item.label),
               pattern: view.patterns.get(p.item.ref),
             },
       ),
@@ -316,23 +322,24 @@ function boardView(bin: Bin<PackItem | Blank>, index: number, view: View) {
 
 function blankContents(blank: Blank, view: View): string {
   return blank.parts
-    .map((p) => `${p.item.label} ${formatWithUnit(p.item.length, view.units)}`)
+    .map((p) => `${partName(p.item.label)} ${fmtLength(p.item.length, view.units)}`)
     .join(' + ');
 }
 
 function blankView(blank: Blank, view: View) {
-  const fmt = (l: Length) => formatWithUnit(l, view.units);
+  const fmt = (l: Length) => fmtLength(l, view.units);
   const segments: Segment[] = [];
   if (blank.trimPerEnd > 0)
-    segments.push({ kind: 'trim', offset: 0, length: blank.trimPerEnd, title: 'Trim' });
+    segments.push({ kind: 'trim', offset: 0, length: blank.trimPerEnd, title: copy.trim });
   for (const placed of blank.parts) {
+    const name = partName(placed.item.label);
     segments.push({
       kind: 'piece',
       offset: placed.offset,
       length: placed.item.length,
-      title: `${placed.item.label} · ${fmt(placed.item.length)}`,
+      title: `${name} · ${fmt(placed.item.length)}`,
       primary: fmt(placed.item.length),
-      secondary: placed.item.label,
+      secondary: name,
       pattern: view.patterns.get(placed.item.ref),
     });
     pushKerf(
@@ -347,7 +354,7 @@ function blankView(blank: Blank, view: View) {
       kind: 'trim',
       offset: blank.length - blank.trimPerEnd,
       length: blank.trimPerEnd,
-      title: 'Trim',
+      title: copy.trim,
     });
   }
   return h(
@@ -359,12 +366,12 @@ function blankView(blank: Blank, view: View) {
       h('span', {}, h('strong', {}, blank.label), ` · ${fmt(blank.length)}`),
       blank.oversize && h('span', { class: 'flag' }, copy.oversize),
     ),
-    bar(blank.length, segments, `Blank ${blank.label}, ${fmt(blank.length)}`),
+    bar(blank.length, segments, copy.blankLabel(blank.label, fmt(blank.length))),
     cutList(
       blank.parts.map((p) => ({
         key: `${p.item.length}:${p.item.label}`,
         text: fmt(p.item.length),
-        detail: p.item.label,
+        detail: partName(p.item.label),
         pattern: view.patterns.get(p.item.ref),
       })),
     ),

@@ -1,12 +1,12 @@
 import { createProject, exampleProject, hasParts, type Project } from '../core/model';
 import type { OptimizeResult } from '../core/optimize';
-import { copy } from './copy';
+import { copy } from './i18n';
 import { setFaviconBusy } from './delight/favicon';
 import { sawdustBurst } from './delight/sawdust';
 import { installBlade } from './delight/blade';
 import { h, isTyping } from './dom';
 import { icon, type IconName } from './icons';
-import { addMaterial, addPart, renderInputs } from './inputs';
+import { addMaterial, addPart, pasteParts, renderInputs } from './inputs';
 import { OptimizerClient } from './optimizer-client';
 import {
   downloadProject,
@@ -22,15 +22,16 @@ import { mountToasts, toast } from './toast';
 
 type Tab = 'inputs' | 'results';
 
-const SHORTCUTS: [string, string][] = [
-  ['N', 'New part'],
-  ['M', 'New material'],
-  ['L', 'Copy share link'],
-  ['P', 'Print'],
-  ['E', 'Export file'],
-  ['Enter', 'Next row (adds one at the end)'],
-  ['?', 'This help'],
-  ['Esc', 'Tidy up after the saw blade'],
+const shortcuts = (): [string, string][] => [
+  ['N', copy.shortcutNewPart],
+  ['M', copy.shortcutNewMaterial],
+  ['L', copy.shortcutShare],
+  ['P', copy.shortcutPrint],
+  ['E', copy.shortcutExport],
+  ['Enter', copy.shortcutEnter],
+  ['⌘/Ctrl V', copy.shortcutPaste],
+  ['?', copy.shortcutHelp],
+  ['Esc', copy.shortcutEsc],
 ];
 
 function initialProject(): Project {
@@ -39,7 +40,7 @@ function initialProject(): Project {
   if (shared && (!local || !hasParts(local) || window.confirm(copy.confirmShared(shared.name)))) {
     return shared;
   }
-  return local ?? createProject();
+  return local ?? createProject(copy.defaultProjectName, copy.defaultMaterialName);
 }
 
 export function startApp(root: HTMLElement): void {
@@ -58,7 +59,7 @@ export function startApp(root: HTMLElement): void {
     value: store.get().name,
     maxlength: 120,
     autocomplete: 'off',
-    'aria-label': 'Project name',
+    'aria-label': copy.projectName,
     onInput: () => store.change((p) => (p.name = nameInput.value)),
   });
   const saved = h('span', { class: 'saved', 'aria-live': 'polite' });
@@ -89,10 +90,10 @@ export function startApp(root: HTMLElement): void {
   };
 
   const actions: { id: string; label: string; icon: IconName; run: () => void }[] = [
-    { id: 'share', label: 'Share', icon: 'share', run: () => void share() },
-    { id: 'print', label: 'Print', icon: 'print', run: () => window.print() },
-    { id: 'export', label: 'Export', icon: 'download', run: () => downloadProject(store.get()) },
-    { id: 'import', label: 'Import', icon: 'upload', run: () => fileInput.click() },
+    { id: 'share', label: copy.share, icon: 'share', run: () => void share() },
+    { id: 'print', label: copy.print, icon: 'print', run: () => window.print() },
+    { id: 'export', label: copy.export, icon: 'download', run: () => downloadProject(store.get()) },
+    { id: 'import', label: copy.import, icon: 'upload', run: () => fileInput.click() },
   ];
   const actionButtons = (cls: string) =>
     actions.map((a) =>
@@ -107,13 +108,13 @@ export function startApp(root: HTMLElement): void {
   const help = h(
     'dialog',
     { class: 'help', 'aria-labelledby': 'help-title' },
-    h('h2', { id: 'help-title' }, 'Keyboard shortcuts'),
+    h('h2', { id: 'help-title' }, copy.keyboardShortcuts),
     h(
       'dl',
       {},
-      SHORTCUTS.map(([key, what]) => [h('dt', {}, h('kbd', {}, key)), h('dd', {}, what)]),
+      shortcuts().map(([key, what]) => [h('dt', {}, h('kbd', {}, key)), h('dd', {}, what)]),
     ),
-    h('form', { method: 'dialog' }, h('button', { class: 'btn' }, 'Got it')),
+    h('form', { method: 'dialog' }, h('button', { class: 'btn' }, copy.gotIt)),
   );
 
   const tabButton = (tab: Tab, label: string, iconName: IconName, badge?: HTMLElement) =>
@@ -136,9 +137,9 @@ export function startApp(root: HTMLElement): void {
   brandMark.title = copy.bladeTitle;
   const tabs = h(
     'div',
-    { class: 'tabs', role: 'tablist', 'aria-label': 'View' },
-    tabButton('inputs', 'Stock & parts', 'list'),
-    tabButton('results', 'Cutlist', 'ruler', badge),
+    { class: 'tabs', role: 'tablist', 'aria-label': copy.view },
+    tabButton('inputs', copy.tabInputs, 'list'),
+    tabButton('results', copy.tabResults, 'ruler', badge),
   );
 
   const header = h(
@@ -152,14 +153,14 @@ export function startApp(root: HTMLElement): void {
       saved,
       h(
         'nav',
-        { class: 'actions', 'aria-label': 'Project' },
+        { class: 'actions', 'aria-label': copy.projectActions },
         actionButtons('btn btn-ghost'),
         h(
           'button',
           {
             type: 'button',
             class: 'btn btn-ghost btn-icon',
-            'aria-label': 'Keyboard shortcuts',
+            'aria-label': copy.keyboardShortcuts,
             onClick: () => help.showModal(),
           },
           icon('keyboard'),
@@ -173,18 +174,18 @@ export function startApp(root: HTMLElement): void {
     class: 'panel panel-inputs',
     id: 'panel-inputs',
     role: 'tabpanel',
-    'aria-label': 'Stock and parts',
+    'aria-label': copy.tabInputs,
   });
   const resultsPanel = h('section', {
     class: 'panel panel-results',
     id: 'panel-results',
     role: 'tabpanel',
-    'aria-label': 'Cutlist',
+    'aria-label': copy.tabResults,
     'aria-live': 'polite',
     'data-testid': 'results',
   });
 
-  const tip = h('button', { type: 'button', class: 'tip', title: 'Another tip' });
+  const tip = h('button', { type: 'button', class: 'tip', title: copy.anotherTip });
   let tipIndex = Math.floor(Math.random() * copy.tips.length);
   const nextTip = () => {
     tipIndex = (tipIndex + 1) % copy.tips.length;
@@ -203,9 +204,13 @@ export function startApp(root: HTMLElement): void {
       'footer',
       { class: 'footer' },
       tip,
-      h('a', { href: 'https://github.com/brianfroelund/cutlist', rel: 'noopener' }, 'Source'),
+      h('a', { href: 'https://github.com/brianfroelund/cutlist', rel: 'noopener' }, copy.source),
     ),
-    h('nav', { class: 'bottombar', 'aria-label': 'Project' }, actionButtons('btn btn-ghost')),
+    h(
+      'nav',
+      { class: 'bottombar', 'aria-label': copy.projectActions },
+      actionButtons('btn btn-ghost'),
+    ),
     toasts,
     help,
     fileInput,
@@ -223,12 +228,14 @@ export function startApp(root: HTMLElement): void {
     store,
     onRemoved: (what: string, snapshot: Project) => undoable(copy.removed(what), snapshot),
     onFocusMaterial: (id: string) => (activeMaterial = id),
+    onPasted: (added: number, skipped: number, snapshot: Project) =>
+      added ? undoable(copy.pasted(added, skipped), snapshot) : toast(copy.pasteNothing),
   };
 
   const resultsCtx = {
     onExample: () => {
       const snapshot = store.get();
-      store.set(exampleProject());
+      store.set(exampleProject(copy.example));
       undoable(copy.exampleLoaded, snapshot);
     },
   };
@@ -311,6 +318,18 @@ export function startApp(root: HTMLElement): void {
     if (!run) return;
     e.preventDefault();
     run();
+  });
+
+  // Paste anywhere outside a field adds parts to the material you last worked in.
+  document.addEventListener('paste', (e) => {
+    if (isTyping(e.target) || help.open) return;
+    const text = e.clipboardData?.getData('text/plain');
+    const materials = store.get().materials;
+    const target = materials.find((m) => m.id === activeMaterial) ?? materials[0];
+    if (!text || !target) return;
+    e.preventDefault();
+    setTab('inputs');
+    pasteParts(inputsCtx, target.id, text);
   });
 
   let closeTidyToast: (() => void) | null = null;
