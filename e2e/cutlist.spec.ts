@@ -47,7 +47,7 @@ test('share links reproduce the project', async ({ page, context, browser, isMob
   await page.getByRole('button', { name: 'Share' }).first().click();
   await expect(page.getByText('Link copied')).toBeVisible();
   const url = await page.evaluate(() => navigator.clipboard.readText());
-  expect(url).toContain('#p=');
+  expect(url).toContain('#Q');
 
   const fresh = await browser.newPage();
   await fresh.goto(url);

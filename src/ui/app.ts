@@ -14,10 +14,11 @@ import {
   readProjectFile,
   saveLocal,
   shareUrl,
+  splitShareUrl,
   takeSharedProject,
 } from './persistence';
 import { renderResults } from './results';
-import { MAX_QR_TEXT, qrSvg } from './qr';
+import { qrSvg } from './qr';
 import { Store } from './store';
 import { mountToasts, toast } from './toast';
 
@@ -357,10 +358,9 @@ export function startApp(root: HTMLElement): void {
     const slot = resultsPanel.querySelector<HTMLElement>('.print-qr');
     if (!slot) return;
     const url = shareUrl(store.get());
+    const qr = qrSvg(...splitShareUrl(url));
     slot.replaceChildren(
-      ...(url.length <= MAX_QR_TEXT
-        ? [qrSvg(url), h('span', {}, copy.printQr)]
-        : [h('span', {}, copy.printQrTooLarge)]),
+      ...(qr ? [qr, h('span', {}, copy.printQr)] : [h('span', {}, copy.printQrTooLarge)]),
     );
   });
 

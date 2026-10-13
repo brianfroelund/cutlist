@@ -61,7 +61,7 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 
 - S40. The project auto-saves to localStorage.
 - S41. Export/import as a `.cutlist.json` file (schema-versioned, validated on import, max 1 MB).
-- S42. Share creates a URL with the compressed project in the hash (`#p=`). Opening it asks before replacing a project that has parts. The hash is removed after loading.
+- S42. Share creates a URL with the project in the hash, in a compact format (`#Q…`): positional fields, no ids, lz-compressed, base-43 text. Older `#p=` links still open. Opening a link asks before replacing a project that has parts. The hash is removed after loading.
 - S43. The app works offline after the first visit (service worker) and can be installed (web manifest).
 
 ### Delight
