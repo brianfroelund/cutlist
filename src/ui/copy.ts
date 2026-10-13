@@ -44,8 +44,9 @@ export const copy = {
   confirmShared: (name: string) =>
     `Open the shared project “${name}”? It replaces what you have open now (export it first if you want to keep it).`,
   celebrate: 'Near-zero waste. Take a bow.',
-  sketchOn: 'Sketch mode. Pencil behind the ear.',
-  sketchOff: 'Back to the clean drawing.',
+  bladeTitle: 'Grab the blade and drag it across the page',
+  sawn: 'Sawdust everywhere. Your project is untouched.',
+  tidyUp: 'Tidy up',
 
   tips: [
     'Measure twice, cut once.',

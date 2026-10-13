@@ -42,17 +42,17 @@ Plainspoken and warm, the way a friendly shop teacher talks. Use short sentences
 
 Small, optional and never in the way. Each one respects `prefers-reduced-motion`.
 
-| Touch                                                                      | Where                   |
-| -------------------------------------------------------------------------- | ----------------------- |
-| FLIP: pieces glide to their new positions when results change              | `ui/delight/flip.ts`    |
-| Waste verdicts ("Your lumberyard will miss you")                           | `copy.wasteVerdict`     |
-| Sawdust drift the first time a plan reaches ≤ 2 % waste (once per session) | `ui/delight/sawdust.ts` |
-| Swipe left to delete on touch, with Undo                                   | `ui/delight/swipe.ts`   |
-| Spinning saw-blade favicon while a slow optimization runs                  | `ui/delight/favicon.ts` |
-| Brand blade spins on hover                                                 | `app.css`               |
-| Rotating shop tips in the footer (tap for another)                         | `copy.tips`             |
-| Keyboard shortcuts (`?` for help)                                          | `ui/app.ts`             |
-| Easter egg: type "sawdust" for pencil-sketch mode                          | `ui/delight/sketch.ts`  |
-| Sawhorse illustration in the empty state                                   | `ui/icons.ts`           |
+| Touch                                                                                   | Where                   |
+| --------------------------------------------------------------------------------------- | ----------------------- |
+| FLIP: pieces glide to their new positions when results change                           | `ui/delight/flip.ts`    |
+| Waste verdicts ("Your lumberyard will miss you")                                        | `copy.wasteVerdict`     |
+| Sawdust drift the first time a plan reaches ≤ 2 % waste (once per session)              | `ui/delight/sawdust.ts` |
+| Swipe left to delete on touch, with Undo                                                | `ui/delight/swipe.ts`   |
+| Spinning saw-blade favicon while a slow optimization runs                               | `ui/delight/favicon.ts` |
+| Brand blade spins on hover                                                              | `app.css`               |
+| Rotating shop tips in the footer (tap for another)                                      | `copy.tips`             |
+| Keyboard shortcuts (`?` for help)                                                       | `ui/app.ts`             |
+| Drag the brand blade to saw the page apart; halves fall away, Esc or "Tidy up" restores | `ui/delight/blade.ts`   |
+| Sawhorse illustration in the empty state                                                | `ui/icons.ts`           |
 
 Add a new touch only if it is cheap, optional and fits the voice. Add it to this table.

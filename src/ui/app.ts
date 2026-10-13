@@ -3,7 +3,7 @@ import type { OptimizeResult } from '../core/optimize';
 import { copy } from './copy';
 import { setFaviconBusy } from './delight/favicon';
 import { sawdustBurst } from './delight/sawdust';
-import { installSketchMode } from './delight/sketch';
+import { installBlade } from './delight/blade';
 import { h, isTyping } from './dom';
 import { icon, type IconName } from './icons';
 import { addMaterial, addPart, renderInputs } from './inputs';
@@ -30,6 +30,7 @@ const SHORTCUTS: [string, string][] = [
   ['E', 'Export file'],
   ['Enter', 'Next row (adds one at the end)'],
   ['?', 'This help'],
+  ['Esc', 'Tidy up after the saw blade'],
 ];
 
 function initialProject(): Project {
@@ -131,6 +132,8 @@ export function startApp(root: HTMLElement): void {
       badge,
     );
   const badge = h('span', { class: 'badge', hidden: true });
+  const brandMark = icon('blade', 'brand-mark');
+  brandMark.title = copy.bladeTitle;
   const tabs = h(
     'div',
     { class: 'tabs', role: 'tablist', 'aria-label': 'View' },
@@ -144,7 +147,7 @@ export function startApp(root: HTMLElement): void {
     h(
       'div',
       { class: 'topbar-row' },
-      h('div', { class: 'brand' }, icon('blade', 'brand-mark'), h('span', {}, 'cutlist')),
+      h('div', { class: 'brand' }, brandMark, h('span', {}, 'cutlist')),
       nameInput,
       saved,
       h(
@@ -310,7 +313,9 @@ export function startApp(root: HTMLElement): void {
     run();
   });
 
-  installSketchMode((on) => toast(on ? copy.sketchOn : copy.sketchOff));
+  installBlade(brandMark, (tidy) =>
+    toast(copy.sawn, { action: { label: copy.tidyUp, run: tidy }, timeout: 8000 }),
+  );
 
   setTab('inputs');
   renderInputs(inputsPanel, inputsCtx);
