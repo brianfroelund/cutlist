@@ -21,7 +21,7 @@ All strategies take items sorted longest-first.
 Each result gets a score tuple, compared lexicographically (lower is better):
 
 ```
-[unplaced count, cost in cents, total stock length, board count, −largest offcut]
+[unplaced count, total stock length, board count, −largest offcut]
 ```
 
 ## Planing (`planing.ts`)

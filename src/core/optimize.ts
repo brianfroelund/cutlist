@@ -33,8 +33,6 @@ export interface Stats {
   /** Stock length not ending up in a part: kerfs, trims and offcuts. */
   waste: Length;
   wastePct: number;
-  /** null when no stock has a price. */
-  cost: number | null;
   largestOffcut: Length;
 }
 
@@ -111,8 +109,7 @@ export function optimizeMaterial(
       options,
     )) {
       const result = pack(set, stock, kerf, options);
-      if (!best || compareScores(scorePack(result, stock), scorePack(best, stock)) < 0)
-        best = result;
+      if (!best || compareScores(scorePack(result), scorePack(best)) < 0) best = result;
     }
     const chosen = best!;
     let n = 0;
@@ -136,8 +133,6 @@ export function optimizeMaterial(
     else shopping.set(bin.stockId, { stockId: bin.stockId, length: bin.stockLength, count: 1 });
   }
 
-  const priced = material.stock.some((s) => s.cost !== null);
-  const costs = new Map(material.stock.map((s) => [s.id, s.cost ?? 0]));
   const stockLength = boards.reduce((sum, b) => sum + b.stockLength, 0);
   const partLength = boards.reduce(
     (sum, b) => sum + b.items.reduce((s, p) => s + partLengthOf(p.item), 0),
@@ -155,7 +150,6 @@ export function optimizeMaterial(
       boards: boards.length,
       stockLength,
       partLength,
-      cost: priced ? boards.reduce((sum, b) => sum + (costs.get(b.stockId) ?? 0), 0) : null,
       largestOffcut: boards.reduce((max, b) => Math.max(max, b.offcut), 0),
     }),
   };
@@ -169,14 +163,12 @@ function makeStats(s: Omit<Stats, 'waste' | 'wastePct'>): Stats {
 
 export function optimize(project: Project, options: PackOptions = DEFAULT_OPTIONS): OptimizeResult {
   const materials = project.materials.map((m) => optimizeMaterial(m, project.kerf, options));
-  const costs = materials.map((m) => m.stats.cost).filter((c): c is number => c !== null);
   return {
     materials,
     totals: makeStats({
       boards: materials.reduce((sum, m) => sum + m.stats.boards, 0),
       stockLength: materials.reduce((sum, m) => sum + m.stats.stockLength, 0),
       partLength: materials.reduce((sum, m) => sum + m.stats.partLength, 0),
-      cost: costs.length ? costs.reduce((a, b) => a + b, 0) : null,
       largestOffcut: materials.reduce((max, m) => Math.max(max, m.stats.largestOffcut), 0),
     }),
   };

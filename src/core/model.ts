@@ -9,7 +9,6 @@ export interface StockItem {
   length: Length;
   /** null means unlimited. */
   quantity: number | null;
-  cost: number | null;
 }
 
 export interface Part {
@@ -46,7 +45,7 @@ export function newId(): string {
 }
 
 export function createStock(length: Length = 0, quantity: number | null = null): StockItem {
-  return { id: newId(), length, quantity, cost: null };
+  return { id: newId(), length, quantity };
 }
 
 export function createPart(label = '', length: Length = 0, quantity = 1): Part {

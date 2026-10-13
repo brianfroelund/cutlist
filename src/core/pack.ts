@@ -213,24 +213,15 @@ function jitter<T>(items: T[], random: Random): T[] {
   return out;
 }
 
-/** Lower is better: unplaced parts, cost, stock length, board count, then the biggest offcut. */
-export function scorePack(result: PackResult, stock: StockItem[]): number[] {
-  const cost = new Map(stock.map((s) => [s.id, s.cost ?? 0]));
-  let money = 0;
+/** Lower is better: unplaced parts, stock length, board count, then the biggest offcut. */
+export function scorePack(result: PackResult): number[] {
   let length = 0;
   let largestOffcut = 0;
   for (const bin of result.bins) {
-    money += cost.get(bin.stockId) ?? 0;
     length += bin.stockLength;
     largestOffcut = Math.max(largestOffcut, bin.offcut);
   }
-  return [
-    result.unplaced.length,
-    Math.round(money * 100),
-    length,
-    result.bins.length,
-    -largestOffcut,
-  ];
+  return [result.unplaced.length, length, result.bins.length, -largestOffcut];
 }
 
 export function compareScores(a: number[], b: number[]): number {
@@ -252,7 +243,7 @@ export function packCandidates<T extends PackItem>(
     results.push(bestFill(sorted, stock, kerf, random));
     results.push(firstFit(jitter(sorted, random), stock, kerf));
   }
-  const scored = results.map((r) => ({ r, score: scorePack(r, stock) }));
+  const scored = results.map((r) => ({ r, score: scorePack(r) }));
   scored.sort((a, b) => compareScores(a.score, b.score));
   return scored.map((s) => s.r);
 }

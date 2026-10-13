@@ -50,6 +50,7 @@ export function renderResults(
       : [
           printHeader(project),
           summary(result, shown, project, issues),
+          partsList(project),
           ...shown.map((mr) =>
             materialView(
               mr,
@@ -112,7 +113,6 @@ function summary(
       stat(String(totals.boards), copy.boards(totals.boards), 'total-boards'),
       stat(formatTotal(totals.stockLength, project.units), 'of stock'),
       stat(`${totals.wastePct}%`, 'waste', 'total-waste'),
-      totals.cost !== null && stat(totals.cost.toFixed(2), 'cost'),
     ),
     h(
       'p',
@@ -134,6 +134,85 @@ function summary(
             mr.shopping
               .map((s) => `${s.count} × ${formatWithUnit(s.length, project.units)}`)
               .join(', ') || '—',
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+function partsList(project: Project) {
+  const fmt = (l: Length) => formatWithUnit(l, project.units);
+  const materials = project.materials
+    .map((m) => ({
+      material: m,
+      parts: m.parts
+        .map((p, i) => ({ part: p, pattern: i % PATTERNS }))
+        .filter(({ part }) => part.length > 0 && part.quantity > 0),
+    }))
+    .filter((m) => m.parts.length > 0);
+  return h(
+    'section',
+    { class: 'print-only parts-list', 'aria-label': 'Parts list' },
+    h('h2', {}, 'Parts list'),
+    materials.map(({ material, parts }) =>
+      h(
+        'table',
+        {},
+        h(
+          'caption',
+          {},
+          material.name || 'Material',
+          material.planingLength !== null &&
+            ` · planed in blanks ≤ ${fmt(material.planingLength)}, trim ${fmt(material.trimPerEnd)} per end`,
+        ),
+        h(
+          'thead',
+          {},
+          h(
+            'tr',
+            {},
+            h('th', {}, ''),
+            h('th', {}, 'Part'),
+            h('th', {}, 'Length'),
+            h('th', {}, 'Qty'),
+          ),
+        ),
+        h(
+          'tbody',
+          {},
+          parts.map(({ part, pattern }) =>
+            h(
+              'tr',
+              {},
+              h('td', {}, h('span', { class: 'swatch', 'data-pattern': pattern })),
+              h('td', {}, part.label.trim() || 'Part'),
+              h('td', { class: 'num' }, fmt(part.length)),
+              h('td', { class: 'num' }, part.quantity),
+            ),
+          ),
+        ),
+        h(
+          'tfoot',
+          {},
+          h(
+            'tr',
+            {},
+            h('td', {}, ''),
+            h('td', {}, 'Total'),
+            h(
+              'td',
+              { class: 'num' },
+              formatTotal(
+                parts.reduce((sum, { part }) => sum + part.length * part.quantity, 0),
+                project.units,
+              ),
+            ),
+            h(
+              'td',
+              { class: 'num' },
+              parts.reduce((sum, { part }) => sum + part.quantity, 0),
+            ),
           ),
         ),
       ),

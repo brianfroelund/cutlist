@@ -13,7 +13,6 @@ const stock = (length: number, quantity: number | null = null, id = `s${length}`
   id,
   length,
   quantity,
-  cost: null,
 });
 
 function assertValid(result: PackResult, kerf: number) {

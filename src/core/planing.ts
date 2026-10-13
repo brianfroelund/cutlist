@@ -67,7 +67,7 @@ export function blankSets(
 
   if (fits.length === 0) return [build([])];
 
-  const planer: StockItem[] = [{ id: 'planing-length', length: inner, quantity: null, cost: null }];
+  const planer: StockItem[] = [{ id: 'planing-length', length: inner, quantity: null }];
   const seen = new Set<string>();
   const sets: Blank[][] = [];
   const singles = fits.map((p) => [p]);

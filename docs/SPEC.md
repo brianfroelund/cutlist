@@ -12,7 +12,7 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 | ------------------ | ------------------------------------------------------------------------------------------------------ |
 | **Project**        | Name, units, kerf and a list of materials. One project is open at a time.                              |
 | **Material**       | A kind of stock (e.g. "Pine 45×95"). Has its own stock list, parts list and optional planing settings. |
-| **Stock**          | Board lengths available: length, quantity (blank = unlimited), optional price.                         |
+| **Stock**          | Board lengths available: length and quantity (blank = unlimited). No prices, by design.                |
 | **Part**           | A piece you need: label, length, quantity.                                                             |
 | **Kerf**           | Width of material removed by each cut. Default 3 mm.                                                   |
 | **Planing length** | The longest piece you want to plane at once (planer bed, shop space, handling).                        |
@@ -35,7 +35,7 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 ### Optimization
 
 - S10. Results update automatically while you type (debounced) and run in a Web Worker.
-- S11. The order of preference: place every part; then lowest cost (if prices are given); then least total stock length; then fewest boards; then the largest single offcut.
+- S11. The order of preference: place every part; then least total stock length; then fewest boards; then the largest single offcut.
 - S12. Pieces on a board are separated by one kerf. No kerf is charged after the last piece if it ends exactly at the board end. If the offcut is thinner than a kerf, only the offcut is consumed.
 - S13. Limited stock quantities are respected. Parts that can't be placed are reported as _too long_ (longer than any board) or _out of stock_.
 - S14. Results are deterministic for the same input.
@@ -49,10 +49,10 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 
 ### Output
 
-- S30. A summary shows boards, total stock length, waste %, cost (if priced), a one-line verdict and a shopping list per material.
+- S30. A summary shows boards, total stock length, waste %, a one-line verdict and a shopping list per material.
 - S31. Each board shows a to-scale bar (parts, kerfs, offcut) and a cut list with checkboxes. Consecutive identical cuts are collapsed (`3 × 700 mm Leg`).
 - S32. Parts are told apart by pattern (8 patterns), never by color.
-- S33. Print produces a greyscale document: project header with date and kerf, summary, and then each material on its own page. Inputs and controls are hidden.
+- S33. Print produces a greyscale document. Page 1 has a project header with date and kerf, the summary, and a complete parts list per material (pattern, part, length, quantity, totals, planing settings). Each material follows on its own page. Inputs and controls are hidden. The parts list appears only in print.
 
 ### Persistence and sharing
 

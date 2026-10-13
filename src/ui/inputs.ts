@@ -12,7 +12,7 @@ import {
 import { copy } from './copy';
 import { attachSwipe } from './delight/swipe';
 import { h } from './dom';
-import { countField, lengthField, moneyField, textField } from './fields';
+import { countField, lengthField, textField } from './fields';
 import { icon } from './icons';
 import type { ChangeOptions, Store } from './store';
 
@@ -135,13 +135,6 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
           focus: `${s.id}:qty`,
           onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.quantity = v))),
         }),
-        moneyField({
-          label: 'Price',
-          value: s.cost,
-          placeholder: '—',
-          focus: `${s.id}:cost`,
-          onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.cost = v))),
-        }),
       ],
       'board length',
       () => remove('a board length', (t) => (t.stock = t.stock.filter((x) => x.id !== s.id))),
@@ -226,7 +219,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
       'Stock',
       copy.stockHint,
       'stock',
-      ['Length', 'Qty', 'Price'],
+      ['Length', 'Qty'],
       m.stock.map(stockRow),
       'Add board length',
       addStock,

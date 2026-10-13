@@ -44,7 +44,7 @@ flowchart LR
 | `core/validate.ts`  | Non-blocking warnings, as codes (text lives in `ui/copy.ts`).            |
 | `core/serialize.ts` | Schema validation, migration, JSON and share-link encoding.              |
 | `ui/dom.ts`         | `h()` element builder and small helpers.                                 |
-| `ui/fields.ts`      | Length/count/money/text inputs with live validation.                     |
+| `ui/fields.ts`      | Length/count/text inputs with live validation.                           |
 | `ui/inputs.ts`      | Settings card, material cards, rows.                                     |
 | `ui/results.ts`     | Summary, boards, blanks, cut lists, print header.                        |
 | `ui/delight/*`      | FLIP, swipe-to-delete, sawdust, favicon spinner, sketch-mode easter egg. |

@@ -27,14 +27,6 @@ describe('optimize', () => {
     );
   });
 
-  it('computes cost only when stock is priced', () => {
-    const m = createMaterial('Pine');
-    m.parts = [createPart('Leg', mm(800), 2)];
-    expect(optimizeMaterial(m, mm(3)).stats.cost).toBeNull();
-    m.stock[0]!.cost = 12.5;
-    expect(optimizeMaterial(m, mm(3)).stats.cost).toBe(12.5);
-  });
-
   it('builds a shopping list grouped by stock length', () => {
     const m = createMaterial('Pine');
     m.parts = [createPart('Rail', mm(2000), 3)];

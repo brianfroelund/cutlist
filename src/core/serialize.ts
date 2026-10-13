@@ -58,15 +58,7 @@ function parseStock(v: unknown): StockItem {
     id: id(v.id),
     length: length(v.length, 'stock length', true),
     quantity: v.quantity === null ? null : quantity(v.quantity, 'stock quantity'),
-    cost: cost(v.cost),
   };
-}
-
-function cost(v: unknown): number | null {
-  if (v === null || v === undefined) return null;
-  if (typeof v !== 'number' || !Number.isFinite(v) || v < 0)
-    throw new ProjectFormatError('Invalid cost');
-  return v;
 }
 
 function parsePart(v: unknown): Part {

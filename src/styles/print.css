@@ -74,8 +74,61 @@
     border: 0;
   }
 
-  .result + .result {
+  /* Page 1: summary + parts list; then one page per material. */
+  .result {
     break-before: page;
+  }
+
+  .parts-list h2 {
+    margin: 12pt 0 4pt;
+    font-size: 13pt;
+  }
+
+  .parts-list table {
+    width: 100%;
+    margin-bottom: 10pt;
+    border-collapse: collapse;
+    font-size: 10pt;
+    break-inside: avoid;
+  }
+
+  .parts-list caption {
+    padding: 4pt 0;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .parts-list th,
+  .parts-list td {
+    padding: 3pt 6pt;
+    border-bottom: 1px solid #bbb;
+    text-align: left;
+  }
+
+  .parts-list th:first-child,
+  .parts-list td:first-child {
+    width: 28px;
+    padding-left: 0;
+  }
+
+  .parts-list .num,
+  .parts-list th:nth-child(n + 3) {
+    text-align: right;
+  }
+
+  .parts-list thead th {
+    border-bottom: 1px solid #000;
+  }
+
+  .parts-list tfoot td {
+    border-top: 1px solid #000;
+    border-bottom: 0;
+    font-weight: 600;
+  }
+
+  .parts-list .swatch {
+    display: inline-block;
+    vertical-align: middle;
   }
 
   .empty {

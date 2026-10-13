@@ -94,20 +94,6 @@ export function countField(o: FieldOptions<number | null>) {
   return field(o.label, input, o.className);
 }
 
-export function moneyField(o: FieldOptions<number | null>) {
-  const input = baseInput(o, o.value === null ? '' : String(o.value), 'decimal');
-  bind(
-    input,
-    (raw) => {
-      const text = raw.trim().replace(',', '.');
-      if (!text) return { ok: true, value: null };
-      return /^\d+(\.\d{1,2})?$/.test(text) ? { ok: true, value: Number(text) } : { ok: false };
-    },
-    o.onCommit,
-  );
-  return field(o.label, input, o.className);
-}
-
 export function textField(o: FieldOptions<string>) {
   const input = baseInput(o, o.value, 'text');
   input.maxLength = 120;

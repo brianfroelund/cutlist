@@ -434,7 +434,7 @@ a {
 }
 
 .stock-grid {
-  grid-template-columns: 1.3fr 0.9fr 0.9fr var(--tap);
+  grid-template-columns: 1.4fr 1fr var(--tap);
 }
 
 .part-grid {
@@ -576,7 +576,7 @@ a {
   }
 
   .stock-grid {
-    grid-template-columns: 1.2fr 0.8fr 0.8fr var(--tap);
+    grid-template-columns: 1.2fr 0.8fr var(--tap);
   }
 
   .part-grid {
@@ -920,8 +920,8 @@ a {
 }
 
 .swatch {
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 10px;
   border: 1px solid var(--piece-edge);
   background-color: var(--piece);
 }
