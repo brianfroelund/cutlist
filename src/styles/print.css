@@ -1,0 +1,105 @@
+/* Printouts are always greyscale; parts are told apart by pattern. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  :root {
+    --paper: #fff;
+    --surface: #fff;
+    --sunken: #f2f2f2;
+    --ink: #000;
+    --ink-soft: #444;
+    --rule: #bbb;
+    --rule-strong: #777;
+    --piece: #fff;
+    --piece-edge: #000;
+    --pattern: #888;
+    --kerf: #000;
+    --warn: #000;
+  }
+
+  html {
+    filter: grayscale(1);
+  }
+
+  body {
+    padding: 0;
+    background: #fff;
+    color: #000;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .topbar,
+  .bottombar,
+  .footer,
+  .toasts,
+  .panel-inputs,
+  .help,
+  .sawdust {
+    display: none !important;
+  }
+
+  .layout {
+    display: block;
+    padding: 0;
+  }
+
+  .panel-results {
+    display: flex !important;
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  .print-header h1 {
+    font-size: 18pt;
+  }
+
+  .print-header p,
+  .print-footer {
+    margin: 2pt 0 0;
+    color: #444;
+    font-size: 9pt;
+  }
+
+  .card {
+    padding: 0;
+    border: 0;
+  }
+
+  .result + .result {
+    break-before: page;
+  }
+
+  .empty {
+    display: none;
+  }
+
+  .bar {
+    border: 1px solid #000;
+  }
+
+  .issue {
+    border: 1px solid #000;
+    background: none;
+  }
+
+  .cut input {
+    appearance: none;
+    width: 11px;
+    height: 11px;
+    border: 1px solid #000;
+  }
+
+  .cut:has(input:checked) {
+    text-decoration: none;
+    color: #000;
+  }
+}

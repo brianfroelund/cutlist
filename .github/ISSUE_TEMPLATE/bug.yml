@@ -1,0 +1,23 @@
+name: Bug
+description: Something is wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: input
+    id: share
+    attributes:
+      label: Share link
+      description: Use the Share button so we can reproduce the exact project.
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser

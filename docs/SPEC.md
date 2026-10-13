@@ -1,0 +1,70 @@
+# Specification
+
+This is the source of truth for behaviour. Update it in the same change as the code.
+
+## Goal
+
+A very simple tool for planning linear cuts in woodworking, similar to Opticutter's linear mode. It works offline, on a phone in the shop and on a laptop at the desk, and prints a clean cutlist.
+
+## Concepts
+
+| Term               | Meaning                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------ |
+| **Project**        | Name, units, kerf and a list of materials. One project is open at a time.                              |
+| **Material**       | A kind of stock (e.g. "Pine 45×95"). Has its own stock list, parts list and optional planing settings. |
+| **Stock**          | Board lengths available: length, quantity (blank = unlimited), optional price.                         |
+| **Part**           | A piece you need: label, length, quantity.                                                             |
+| **Kerf**           | Width of material removed by each cut. Default 3 mm.                                                   |
+| **Planing length** | The longest piece you want to plane at once (planer bed, shop space, handling).                        |
+| **Trim per end**   | Waste at each end of a blank (snipe and squaring cut), kerf included. Default 20 mm.                   |
+| **Blank**          | A rough-cut piece that holds one or more parts and gets planed before final cutting.                   |
+| **Offcut**         | Usable leftover at the end of a board.                                                                 |
+
+## Behaviour
+
+### Inputs
+
+- S1. Units are mm (default) or inches. Inches accept decimals, fractions and feet (`48 1/2`, `4' 2"`). Metric accepts `mm`, `cm` and `m` suffixes and a decimal comma. Switching units converts how values are shown, never the stored values.
+- S2. Kerf ≥ 0. Kerf over 20 mm shows a warning.
+- S3. A project can hold several materials; each is optimized independently.
+- S4. Empty, zero or invalid rows are ignored by the optimizer. Invalid fields are marked but never block other edits.
+- S5. Enter in a row moves to the same field in the next row, or adds a new row from the last one.
+- S6. Removing anything shows an Undo toast. There are no confirmation dialogs for deletes.
+- S7. On touch devices a row can be swiped left to delete it.
+
+### Optimization
+
+- S10. Results update automatically while you type (debounced) and run in a Web Worker.
+- S11. The order of preference: place every part; then lowest cost (if prices are given); then least total stock length; then fewest boards; then the largest single offcut.
+- S12. Pieces on a board are separated by one kerf. No kerf is charged after the last piece if it ends exactly at the board end. If the offcut is thinner than a kerf, only the offcut is consumed.
+- S13. Limited stock quantities are respected. Parts that can't be placed are reported as _too long_ (longer than any board) or _out of stock_.
+- S14. Results are deterministic for the same input.
+
+### Planing workflow (per material, optional)
+
+- S20. When enabled, parts are first grouped into blanks. Blank length = trim + parts + kerfs between parts + trim, and must be ≤ planing length.
+- S21. A part that alone exceeds the planing length becomes its own _oversize_ blank and is flagged.
+- S22. Blanks are then optimized onto stock like parts. Several blank groupings are tried and the one with the best stock result wins.
+- S23. Output has two steps: (1) rough cut boards into blanks B1, B2, … (2) plane, then cut each blank into its parts.
+
+### Output
+
+- S30. A summary shows boards, total stock length, waste %, cost (if priced), a one-line verdict and a shopping list per material.
+- S31. Each board shows a to-scale bar (parts, kerfs, offcut) and a cut list with checkboxes. Consecutive identical cuts are collapsed (`3 × 700 mm Leg`).
+- S32. Parts are told apart by pattern (8 patterns), never by color.
+- S33. Print produces a greyscale document: project header with date and kerf, summary, and then each material on its own page. Inputs and controls are hidden.
+
+### Persistence and sharing
+
+- S40. The project auto-saves to localStorage.
+- S41. Export/import as a `.cutlist.json` file (schema-versioned, validated on import, max 1 MB).
+- S42. Share creates a URL with the compressed project in the hash (`#p=`). Opening it asks before replacing a project that has parts. The hash is removed after loading.
+- S43. The app works offline after the first visit (service worker) and can be installed (web manifest).
+
+### Delight
+
+See [DESIGN.md](DESIGN.md#delight). None of it may get in the way of entering data.
+
+## Out of scope (for now)
+
+2D sheet goods, grain direction, width/thickness optimization, accounts and a server. See [ROADMAP.md](ROADMAP.md).

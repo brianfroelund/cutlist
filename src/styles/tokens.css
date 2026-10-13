@@ -1,0 +1,64 @@
+/* Solarized (Ethan Schoonover). Color is used sparingly: ink and paper do most of the work. */
+:root {
+  --base03: #002b36;
+  --base02: #073642;
+  --base01: #586e75;
+  --base00: #657b83;
+  --base0: #839496;
+  --base1: #93a1a1;
+  --base2: #eee8d5;
+  --base3: #fdf6e3;
+  --yellow: #b58900;
+  --orange: #cb4b16;
+  --red: #dc322f;
+  --blue: #268bd2;
+
+  --paper: var(--base3);
+  --surface: var(--base3);
+  --sunken: var(--base2);
+  --ink: var(--base02);
+  --ink-soft: var(--base01);
+  --rule: #e2dbc6;
+  --rule-strong: var(--base1);
+  --accent: var(--orange);
+  --focus: var(--blue);
+  --danger: var(--red);
+  --warn: var(--yellow);
+
+  --piece: var(--base2);
+  --piece-edge: var(--base1);
+  --pattern: rgb(88 110 117 / 0.38);
+  --kerf: var(--base01);
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-serif: 'Iowan Old Style', 'Charter', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --tap: 44px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: var(--base03);
+    --surface: var(--base03);
+    --sunken: var(--base02);
+    --ink: var(--base1);
+    --ink-soft: var(--base0);
+    --rule: #0d4351;
+    --rule-strong: var(--base01);
+    --piece: var(--base02);
+    --piece-edge: var(--base01);
+    --pattern: rgb(147 161 161 / 0.35);
+    --kerf: var(--base1);
+  }
+}

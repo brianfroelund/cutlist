@@ -1,0 +1,11 @@
+{
+  "name": "cutlist",
+  "short_name": "cutlist",
+  "description": "A simple linear cutlist optimizer for woodworkers.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fdf6e3",
+  "theme_color": "#fdf6e3",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
