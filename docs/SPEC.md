@@ -52,7 +52,7 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 ### Output
 
 - S30. A summary shows boards, total stock length, waste %, a one-line verdict and a shopping list per material.
-- S31. Each board shows a to-scale bar (parts, kerfs, offcut) and a cut list with checkboxes. Consecutive identical cuts are collapsed (`3 × 700 mm Leg`).
+- S31. Each stock board group and each planing blank group shows a to-scale bar, a cut list and one checkbox in its heading. Checking it completes the entire group (including all copies in `2 × 2400 mm`); unchecking reopens it. Stock and blank groups can be checked independently. Individual cuts have no checkboxes. Completion is temporary and resets when results are rendered again or the page reloads; it is not saved or shared. Consecutive identical cuts are collapsed (`3 × 700 mm Leg`). The group-level checkbox also appears in print, retaining its checked state.
 - S32. Parts are told apart by pattern (8 patterns), never by color.
 - S34. The print header has a QR code with the project's share link, so a phone can reopen the exact project from the paper. If the link is too long to scan reliably, a short note suggests using Share instead.
 - S33. Print produces a greyscale document. Page 1 has a project header with date and kerf, the summary, and a complete parts list per material (pattern, part, length, quantity, totals, planing settings). Each material follows on its own page. Inputs and controls are hidden. The parts list appears only in print.

@@ -167,15 +167,36 @@
     background: none;
   }
 
-  .cut input {
-    appearance: none;
-    width: 11px;
-    height: 11px;
-    border: 1px solid #000;
+  .board-complete {
+    min-height: 0;
   }
 
-  .cut:has(input:checked) {
-    text-decoration: none;
-    color: #000;
+  .board-complete input {
+    display: none;
+  }
+
+  .board-checkmark {
+    flex-basis: 12px;
+    width: 12px;
+    height: 12px;
+    border: 1px solid #000;
+    border-radius: 0;
+    animation: none;
+  }
+
+  .board-complete input:checked + .board-checkmark {
+    background: none;
+    border-color: #000;
+    animation: none;
+  }
+
+  .board-checkmark::after {
+    width: 4px;
+    height: 8px;
+    border-color: #000;
+  }
+
+  .board:has(.board-complete input:checked) > .bar::after {
+    display: none;
   }
 }

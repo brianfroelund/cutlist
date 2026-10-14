@@ -35,6 +35,46 @@ test('loads the example and plans planing blanks', async ({ page, isMobile }) =>
   await showResults(page, isMobile);
   await page.getByRole('button', { name: 'Show me an example' }).click();
   await expect(page.getByText('Plane, then cut blanks to parts')).toBeVisible();
+  await expect(page.locator('.cuts input')).toHaveCount(0);
+  const stock = page.getByTestId('board').first().getByRole('checkbox');
+  await expect(stock).toHaveCount(1);
+  const blanks = page.locator('.blank-board');
+  await expect(blanks.first()).toBeVisible();
+  expect(await blanks.count()).toBeGreaterThan(1);
+  for (const blank of await blanks.all()) {
+    await expect(blank.getByRole('checkbox')).toHaveCount(1);
+  }
+  const complete = blanks.first().getByRole('checkbox', { name: /^B1 ·/ });
+  await complete.check();
+  await expect(complete).toBeChecked();
+  await expect(blanks.first().locator('.board-title')).toHaveCSS(
+    'text-decoration-line',
+    'line-through',
+  );
+  await expect(stock).not.toBeChecked();
+  await expect(blanks.nth(1).getByRole('checkbox')).not.toBeChecked();
+  await stock.check();
+  await complete.uncheck();
+  await expect(complete).not.toBeChecked();
+  await expect(stock).toBeChecked();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await complete.focus();
+  await page.keyboard.press('Space');
+  await expect(complete).toBeChecked();
+  await expect(blanks.first().locator('.board-checkmark')).toHaveCSS(
+    'animation-duration',
+    '1e-05s',
+  );
+  if (isMobile) await page.setViewportSize({ width: 375, height: 812 });
+  await complete.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: test.info().outputPath('blanks-completed.png'), fullPage: true });
+  await page.emulateMedia({ media: 'print' });
+  await expect(blanks.first().locator('.board-checkmark')).toBeVisible();
+  await expect(blanks.first().locator('input[type="checkbox"]')).toBeChecked();
+  await page.screenshot({
+    path: test.info().outputPath('blanks-completed-print.png'),
+    fullPage: true,
+  });
 });
 
 test('share links reproduce the project', async ({ page, context, browser, isMobile }) => {
@@ -117,6 +157,46 @@ test('identical boards are listed once', async ({ page, isMobile }) => {
   await expect(page.getByTestId('total-boards')).toHaveText('2');
   await expect(page.getByTestId('board')).toHaveCount(1);
   await expect(page.getByTestId('board')).toContainText('2 × 2400 mm');
+  const board = page.getByTestId('board');
+  const complete = board.getByRole('checkbox', { name: '#1 · 2 × 2400 mm' });
+  await expect(board.getByRole('checkbox')).toHaveCount(1);
+  await expect(page.locator('.cuts input')).toHaveCount(0);
+  await complete.check();
+  await expect(complete).toBeChecked();
+  await expect(board.locator('.cut-text')).toHaveText('3 × 700 mm');
+  await complete.uncheck();
+  await expect(complete).not.toBeChecked();
+});
+
+test('stock completion supports keyboard, reduced motion and print', async ({ page, isMobile }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('./');
+  await addPart(page, 'Leg', '700', '6');
+  await showResults(page, isMobile);
+  const board = page.getByTestId('board');
+  const complete = board.getByRole('checkbox');
+  await expect(complete).toHaveCount(1);
+  await complete.focus();
+  await page.keyboard.press('Space');
+  await expect(complete).toBeChecked();
+  await expect(board.locator('.board-title')).toHaveCSS('text-decoration-line', 'line-through');
+  await expect(board.locator('.board-checkmark')).toHaveCSS('animation-duration', '1e-05s');
+  const bounds = await complete.boundingBox();
+  expect(bounds!.height).toBeGreaterThanOrEqual(44);
+  if (isMobile) await page.setViewportSize({ width: 375, height: 812 });
+  await expect(board).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    await page.evaluate(() => window.innerWidth),
+  );
+  await page.screenshot({ path: test.info().outputPath('stock-completed.png'), fullPage: true });
+  await page.emulateMedia({ media: 'print' });
+  await expect(board.locator('.board-checkmark')).toBeVisible();
+  await expect(board.locator('.board-checkmark')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(board.locator('.cut-text')).toHaveText('3 × 700 mm');
+  await page.screenshot({
+    path: test.info().outputPath('stock-completed-print.png'),
+    fullPage: true,
+  });
 });
 
 test('the printout carries a QR code back to the project', async ({ page, isMobile }) => {

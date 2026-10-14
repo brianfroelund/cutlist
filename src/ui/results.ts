@@ -300,6 +300,16 @@ const headLength = (count: number, length: string) => [
   length,
 ];
 
+function completionHeading(label: string, count: number, length: string) {
+  return h(
+    'label',
+    { class: 'board-complete' },
+    h('input', { type: 'checkbox' }),
+    h('span', { class: 'board-checkmark', 'aria-hidden': 'true' }),
+    h('span', { class: 'board-title' }, h('strong', {}, label), ' · ', headLength(count, length)),
+  );
+}
+
 function boardView(bin: Bin<PackItem | Blank>, count: number, index: number, view: View) {
   const fmt = (l: Length) => fmtLength(l, view.units);
   const segments: Segment[] = [];
@@ -325,13 +335,7 @@ function boardView(bin: Bin<PackItem | Blank>, count: number, index: number, vie
     h(
       'div',
       { class: 'board-head' },
-      h(
-        'span',
-        {},
-        h('strong', {}, `#${index + 1}`),
-        ' · ',
-        headLength(count, fmt(bin.stockLength)),
-      ),
+      completionHeading(`#${index + 1}`, count, fmt(bin.stockLength)),
       bin.offcut > 0 && h('span', { class: 'muted' }, `${copy.offcut} ${fmt(bin.offcut)}`),
     ),
     bar(bin.stockLength, segments, copy.boardLabel(index + 1, fmt(bin.stockLength))),
@@ -397,7 +401,7 @@ function blankView(blank: Blank, count: number, view: View) {
     h(
       'div',
       { class: 'board-head' },
-      h('span', {}, h('strong', {}, blank.label), ' · ', headLength(count, fmt(blank.length))),
+      completionHeading(blank.label, count, fmt(blank.length)),
       blank.oversize && h('span', { class: 'flag' }, copy.oversize),
     ),
     bar(blank.length, segments, copy.blankLabel(blank.label, fmt(blank.length))),
@@ -447,7 +451,6 @@ interface CutLine {
   pattern?: number;
 }
 
-/** Consecutive identical cuts collapse into "3 × 700 mm Leg"; checkboxes let you tick cuts off in the shop. */
 function cutList(lines: CutLine[]) {
   const grouped: (CutLine & { count: number })[] = [];
   for (const line of lines) {
@@ -463,9 +466,8 @@ function cutList(lines: CutLine[]) {
         'li',
         {},
         h(
-          'label',
+          'span',
           { class: 'cut' },
-          h('input', { type: 'checkbox' }),
           g.pattern !== undefined &&
             h('span', { class: 'swatch', 'data-pattern': g.pattern, 'aria-hidden': 'true' }),
           h('span', { class: 'cut-text' }, g.count > 1 ? `${g.count} × ${g.text}` : g.text),
