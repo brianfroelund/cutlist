@@ -155,10 +155,19 @@ a {
   font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 600;
+  line-height: 1;
   letter-spacing: -0.02em;
 }
 
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
 .brand-mark svg {
+  display: block;
   width: 24px;
   height: 24px;
   color: var(--accent);
