@@ -219,6 +219,9 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
                   for (const s of t.stock) {
                     if (!s.width) s.width = DEFAULT_SHEET_WIDTH;
                   }
+                  if (t.parts.length === 0) {
+                    t.parts.push(createPart('', 0, 1, 0, 'any'));
+                  }
                   for (const p of t.parts) {
                     if (!p.width)
                       p.width = Math.min(p.length || DEFAULT_SHEET_WIDTH, DEFAULT_SHEET_WIDTH);
@@ -226,6 +229,8 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
                   }
                   if (t.edgeTrim === undefined) t.edgeTrim = 0;
                   if (!t.cutStyle) t.cutStyle = 'guillotine';
+                } else if (t.parts.length === 0) {
+                  t.parts.push(createPart());
                 }
               },
               { structure: true },
