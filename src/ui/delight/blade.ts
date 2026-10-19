@@ -82,7 +82,17 @@ export interface BladeCallbacks {
  */
 export function installBlade(handle: HTMLElement, callbacks: BladeCallbacks): void {
   const layer = h('div', { class: 'saw-layer', 'aria-hidden': 'true' });
-  const blade = h('div', { class: 'saw-blade', 'aria-hidden': 'true' }, icon('blade'));
+  const blade = h(
+    'div',
+    { class: 'saw-blade', 'aria-hidden': 'true' },
+    h(
+      'div',
+      { class: 'saw-blade-inner' },
+      h('div', { class: 'saw-blade-blur' }),
+      icon('blade', 'saw-blade-ghost'),
+      icon('blade', 'saw-blade-svg'),
+    ),
+  );
   const sawn: HTMLElement[] = [];
   const pieces: Piece[] = [];
   let dragging = false;

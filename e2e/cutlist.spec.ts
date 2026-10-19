@@ -209,3 +209,24 @@ test('the printout carries a QR code back to the project', async ({ page, isMobi
   await expect(page.locator('.print-qr svg')).toBeVisible();
   await expect(page.locator('.print-qr')).toContainText('Scan to open this project');
 });
+
+test('holding the brand mark spins the saw blade fast with motion indicators', async ({ page }) => {
+  await page.goto('./');
+  const brand = page.locator('.brand-mark');
+  await expect(brand).toBeVisible();
+  const box = await brand.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.down();
+  const blade = page.locator('.saw-blade');
+  await expect(blade).toBeVisible();
+  await expect(blade.locator('.saw-blade-inner')).toBeVisible();
+  await expect(blade.locator('.saw-blade-blur')).toBeVisible();
+  await expect(blade.locator('.saw-blade-ghost')).toBeVisible();
+  await expect(blade.locator('.saw-blade-svg')).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('saw-blade-held.png') });
+  await page.mouse.move(250, 200, { steps: 5 });
+  await page.screenshot({ path: test.info().outputPath('saw-blade-dragged.png') });
+  await page.mouse.up();
+  await expect(blade).not.toBeVisible();
+});

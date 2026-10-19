@@ -1387,15 +1387,106 @@ body.sawing * {
   pointer-events: none;
 }
 
-.saw-blade svg {
+.saw-blade-inner {
+  position: relative;
   width: 100%;
   height: 100%;
-  animation: saw-spin 0.3s linear infinite;
+  animation: saw-buzz 0.035s linear infinite;
+}
+
+.saw-blade-blur {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 60%,
+    color-mix(in srgb, var(--accent) 22%, transparent) 65%,
+    color-mix(in srgb, var(--accent) 38%, transparent) 82%,
+    color-mix(in srgb, var(--accent) 18%, transparent) 89%,
+    transparent 94%
+  );
+}
+
+/* Outer wind shear / centrifugal air streak */
+.saw-blade-blur::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  border-top-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  border-left-color: color-mix(in srgb, var(--accent) 25%, transparent);
+  filter: drop-shadow(0 0 1px var(--accent));
+  animation: saw-spin 0.05s linear infinite;
+}
+
+/* Teeth perimeter speed arcs */
+.saw-blade-blur::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  border-top-color: color-mix(in srgb, var(--accent) 75%, transparent);
+  border-right-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  filter: drop-shadow(0 0 1.5px var(--accent));
+  animation: saw-spin 0.06s linear infinite;
+}
+
+.saw-blade-ghost,
+.saw-blade-svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.saw-blade-ghost svg,
+.saw-blade-svg svg,
+.saw-blade svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.saw-blade-svg svg,
+.saw-blade svg {
+  animation: saw-spin 0.06s linear infinite;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent) 45%, transparent));
+}
+
+.saw-blade-ghost {
+  opacity: 0.4;
+  filter: blur(1.5px);
+}
+
+.saw-blade-ghost svg {
+  animation: saw-spin 0.06s linear infinite;
+  animation-delay: -0.015s;
 }
 
 @keyframes saw-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes saw-buzz {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-0.7px, 0.5px);
+  }
+  50% {
+    transform: translate(0.6px, -0.6px);
+  }
+  75% {
+    transform: translate(-0.5px, -0.5px);
   }
 }
 

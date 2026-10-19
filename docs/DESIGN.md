@@ -53,7 +53,7 @@ Small, optional and never in the way. Each one respects `prefers-reduced-motion`
 | Stock and blank completion: checkmark pops and a brief sweep crosses the bar; the heading stays struck through, with cut details readable. Reduced motion keeps the checked state without movement. | `app.css`               |
 | Rotating shop tips in the footer (tap for another)                                                                                                                                                  | `copy.tips`             |
 | Keyboard shortcuts (`?` for help)                                                                                                                                                                   | `ui/app.ts`             |
-| Drag the brand blade to saw the page apart; halves fall away, Esc or "Tidy up" restores                                                                                                             | `ui/delight/blade.ts`   |
+| Drag the brand blade to saw the page apart: high-speed spin with teeth blur and speed arcs; halves fall away, Esc or "Tidy up" restores                                                             | `ui/delight/blade.ts`   |
 | Workbench illustration in the empty state                                                                                                                                                           | `ui/icons.ts`           |
 
 Add a new touch only if it is cheap, optional and fits the voice. Add it to this table.
