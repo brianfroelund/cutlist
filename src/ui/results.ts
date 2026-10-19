@@ -11,6 +11,7 @@ import { workbench } from './icons';
 
 export interface ResultsContext {
   onExample(): void;
+  onJumpToPart?(partId: string): void;
 }
 
 const PATTERNS = 8;
@@ -24,6 +25,7 @@ interface Segment {
   secondary?: string;
   pattern?: number;
   flip?: string;
+  partId?: string;
 }
 
 interface View {
@@ -36,12 +38,51 @@ interface View {
 const pct = (value: number, total: number) => `${((value / total) * 100).toFixed(3)}%`;
 const partName = (label: string) => label.trim() || copy.part;
 
+let activeContext: ResultsContext | null = null;
+
+function ensureInteractive(root: HTMLElement) {
+  if (root.dataset.interactive) return;
+  root.dataset.interactive = 'true';
+
+  root.addEventListener('pointerover', (e) => {
+    const target = (e.target as HTMLElement).closest<HTMLElement>('[data-part-id]');
+    const partId = target?.dataset.partId;
+    if (!partId) return;
+    for (const el of root.querySelectorAll<HTMLElement>(
+      `.seg-piece[data-part-id="${CSS.escape(partId)}"], .sheet-piece[data-part-id="${CSS.escape(partId)}"]`,
+    )) {
+      el.classList.add('is-highlighted');
+    }
+  });
+
+  root.addEventListener('pointerout', (e) => {
+    const target = (e.target as HTMLElement).closest<HTMLElement>('[data-part-id]');
+    const partId = target?.dataset.partId;
+    if (!partId) return;
+    for (const el of root.querySelectorAll<HTMLElement>(
+      `.seg-piece[data-part-id="${CSS.escape(partId)}"], .sheet-piece[data-part-id="${CSS.escape(partId)}"]`,
+    )) {
+      el.classList.remove('is-highlighted');
+    }
+  });
+
+  root.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest<HTMLElement>('[data-part-id]');
+    const partId = target?.dataset.partId;
+    if (partId && activeContext?.onJumpToPart) {
+      activeContext.onJumpToPart(partId);
+    }
+  });
+}
+
 export function renderResults(
   root: HTMLElement,
   result: OptimizeResult,
   project: Project,
   ctx: ResultsContext,
 ): void {
+  activeContext = ctx;
+  ensureInteractive(root);
   const before = captureRects(root);
   const issues = validateProject(project);
   const shown = result.materials.filter((mr) =>
@@ -181,7 +222,7 @@ function partsList(project: Project) {
   const grainLabel = (g?: string) => {
     if (g === 'length') return copy.grainLength;
     if (g === 'width') return copy.grainWidth;
-    return copy.grainAny;
+    return copy.grainNone;
   };
   const materials = project.materials
     .map((m) => ({
@@ -452,6 +493,7 @@ function sheetView(sheet: SheetLayout, count: number, index: number, view: View)
           class: 'seg seg-piece sheet-piece',
           title: `${partName(p.item.label)} · ${fmtSize(p.w, p.h, view.units)}${p.rotated ? ' ⟳' : ''}`,
           'data-pattern': view.patterns.get(p.item.ref),
+          'data-part-id': p.item.ref,
         },
         h('span', { class: 'seg-primary' }, partName(p.item.label)),
         h('span', { class: 'seg-secondary' }, fmtSize(p.w, p.h, view.units)),
@@ -501,6 +543,7 @@ function sheetView(sheet: SheetLayout, count: number, index: number, view: View)
           text: fmtSize(p.w, p.h, view.units),
           detail: partName(p.item.label),
           pattern: view.patterns.get(p.item.ref),
+          partId: p.item.ref,
         })),
     ),
   );
@@ -552,6 +595,7 @@ function boardView(bin: Bin<PackItem | Blank>, count: number, index: number, vie
       secondary: blank ? fmt(item.length) : name,
       pattern: blank ? undefined : view.patterns.get(item.ref),
       flip: `${view.materialId}:${item.id}`,
+      partId: blank ? undefined : item.ref,
     });
     pushKerf(segments, placed.offset + item.length, bin.stockLength, view.kerf);
   }
@@ -578,6 +622,7 @@ function boardView(bin: Bin<PackItem | Blank>, count: number, index: number, vie
               text: fmt(p.item.length),
               detail: partName(p.item.label),
               pattern: view.patterns.get(p.item.ref),
+              partId: p.item.ref,
             },
       ),
     ),
@@ -605,6 +650,7 @@ function blankView(blank: Blank, count: number, view: View) {
       primary: fmt(placed.item.length),
       secondary: name,
       pattern: view.patterns.get(placed.item.ref),
+      partId: placed.item.ref,
     });
     pushKerf(
       segments,
@@ -637,6 +683,7 @@ function blankView(blank: Blank, count: number, view: View) {
         text: fmt(p.item.length),
         detail: partName(p.item.label),
         pattern: view.patterns.get(p.item.ref),
+        partId: p.item.ref,
       })),
     ),
   );
@@ -659,6 +706,7 @@ function bar(total: Length, segments: Segment[], label: string) {
           title: s.title,
           'data-flip': s.flip,
           'data-pattern': s.pattern,
+          ...(s.partId ? { 'data-part-id': s.partId } : {}),
         },
         s.primary && h('span', { class: 'seg-primary' }, s.primary),
         s.secondary && h('span', { class: 'seg-secondary' }, s.secondary),
@@ -675,6 +723,7 @@ interface CutLine {
   text: string;
   detail: string;
   pattern?: number;
+  partId?: string;
 }
 
 function cutList(lines: CutLine[]) {
@@ -690,7 +739,9 @@ function cutList(lines: CutLine[]) {
     grouped.map((g) =>
       h(
         'li',
-        {},
+        {
+          ...(g.partId ? { 'data-part-id': g.partId } : {}),
+        },
         h(
           'span',
           { class: 'cut' },

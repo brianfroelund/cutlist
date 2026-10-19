@@ -45,6 +45,7 @@ export const it: Messages = {
   stock: 'Materiale',
   stockHint: 'le tavole che hai',
   sheetStockHint: 'pannelli disponibili',
+  stockQtyUnlimited: 'Lascia vuoto per illimitato',
   parts: 'Pezzi',
   partsHint: 'quello che ti serve',
   length: 'Lunghezza',
@@ -63,6 +64,7 @@ export const it: Messages = {
   aSheetSize: 'una misura di pannello',
   aPart: 'un pezzo',
   theMaterial: 'il materiale',
+  unplacedPartTooltip: 'Il pezzo non può essere posizionato sul materiale disponibile',
   pasteHint:
     'Consiglio: incolla righe direttamente da un foglio di calcolo — nome, lunghezza, quantità.',
   pasteHintSheet:
@@ -71,12 +73,13 @@ export const it: Messages = {
   grainLength: 'Lungo la lunghezza',
   grainWidth: 'Lungo la larghezza',
   grainAny: 'Qualsiasi',
+  grainNone: 'No',
   grainHint: 'I pezzi mantengono la venatura. Scegli "Qualsiasi" se non è visibile.',
   edgeTrim: 'Rifilatura bordi',
   edgeTrimHint: 'Rifilata da ogni bordo per pulire bordi rovinati. Spessore lama incluso.',
   cutStyle: 'Tipo di taglio',
   cutGuillotine: 'Tagli passanti',
-  cutNested: 'Minor scarto',
+  cutNested: 'CNC',
   planingToggle: 'Prima taglia grezzo in sbozzi da piallare',
   planingHint:
     'I pezzi vengono raggruppati in sbozzi non più lunghi della lunghezza di piallatura. Lo scarto copre il segno della pialla e il taglio a squadra a ogni estremità.',

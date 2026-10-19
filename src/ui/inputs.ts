@@ -53,7 +53,15 @@ export function addMaterial(store: Store): void {
 
 export function addPart(store: Store, materialId: string): void {
   const material = store.get().materials.find((m) => m.id === materialId);
-  const part = material?.kind === 'sheet' ? createPart('', 0, 1, 0, 'any') : createPart();
+  if (!material) return;
+  const emptyPart = material.parts.find(
+    (p) => !p.label.trim() && p.length === 0 && (p.width === undefined || p.width === 0),
+  );
+  if (emptyPart) {
+    store.change(() => {}, { structure: false, focus: `${emptyPart.id}:label` });
+    return;
+  }
+  const part = material.kind === 'sheet' ? createPart('', 0, 1, 0, 'any') : createPart();
   store.change((p) => p.materials.find((m) => m.id === materialId)?.parts.push(part), {
     structure: true,
     focus: `${part.id}:label`,
@@ -89,8 +97,17 @@ export function pasteParts(
           !at.label.trim() &&
           at.length === 0 &&
           (at.width === undefined || at.width === 0);
-        if (index < 0) target.parts.push(...created);
-        else target.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+        if (index < 0) {
+          const onlyEmpty =
+            target.parts.length === 1 &&
+            !target.parts[0]!.label.trim() &&
+            target.parts[0]!.length === 0 &&
+            (target.parts[0]!.width === undefined || target.parts[0]!.width === 0);
+          if (onlyEmpty) target.parts = [...created];
+          else target.parts.push(...created);
+        } else {
+          target.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+        }
       },
       { structure: true, focus: `${created[created.length - 1]!.id}:label` },
     );
@@ -109,8 +126,16 @@ export function pasteParts(
         const index = target.parts.findIndex((x) => x.id === atPartId);
         const at = target.parts[index];
         const replace = at !== undefined && !at.label.trim() && at.length === 0;
-        if (index < 0) target.parts.push(...created);
-        else target.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+        if (index < 0) {
+          const onlyEmpty =
+            target.parts.length === 1 &&
+            !target.parts[0]!.label.trim() &&
+            target.parts[0]!.length === 0;
+          if (onlyEmpty) target.parts = [...created];
+          else target.parts.push(...created);
+        } else {
+          target.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+        }
       },
       { structure: true, focus: `${created[created.length - 1]!.id}:label` },
     );
@@ -236,6 +261,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
           label: copy.qty,
           value: s.quantity,
           placeholder: '∞',
+          title: copy.stockQtyUnlimited,
           focus: `${s.id}:qty`,
           onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.quantity = v))),
         }),
@@ -267,6 +293,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
           label: copy.qty,
           value: s.quantity,
           placeholder: '∞',
+          title: copy.stockQtyUnlimited,
           focus: `${s.id}:qty`,
           onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.quantity = v))),
         }),
@@ -309,6 +336,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
         });
       },
       () => addPart(ctx.store, m.id),
+      part.id,
     );
     // A single value pastes normally; rows or columns become new parts.
     el.addEventListener('paste', (e) => {
@@ -357,9 +385,9 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
           value: part.grain ?? 'any',
           className: 'field-grain',
           options: [
-            { value: 'any', label: '⟳', title: copy.grainAny },
-            { value: 'length', label: '→', title: copy.grainLength },
-            { value: 'width', label: '↓', title: copy.grainWidth },
+            { value: 'any', label: copy.grainNone, title: copy.grainAny },
+            { value: 'length', label: '⟷', title: copy.grainLength },
+            { value: 'width', label: '↕', title: copy.grainWidth },
           ],
           focus: `${part.id}:grain`,
           onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.grain = v))),
@@ -373,6 +401,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
         });
       },
       () => addPart(ctx.store, m.id),
+      part.id,
     );
     el.addEventListener('paste', (e) => {
       const text = e.clipboardData?.getData('text/plain');
@@ -601,12 +630,14 @@ function row(
   removeLabel: string,
   onRemove: () => void,
   onEnterLast: () => void,
+  partId?: string,
 ) {
   const el = h(
     'div',
     {
       class: `row ${kind}-grid`,
       'data-testid': kind.includes('stock') ? 'stock-row' : 'part-row',
+      ...(partId ? { 'data-part-id': partId } : {}),
     },
     fields,
     h(

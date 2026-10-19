@@ -12,12 +12,19 @@ interface FieldOptions<T> {
   focus?: string;
   placeholder?: string;
   className?: string;
+  title?: string;
 }
 
-function field(label: string, input: HTMLInputElement, className = '', suffix?: string) {
+function field(
+  label: string,
+  input: HTMLInputElement,
+  className = '',
+  suffix?: string,
+  title?: string,
+) {
   return h(
     'label',
-    { class: `field ${className}` },
+    { class: `field ${className}`, title: title ?? '' },
     h('span', { class: 'field-label' }, label),
     h(
       'span',
@@ -56,6 +63,7 @@ const baseInput = (o: FieldOptions<unknown>, value: string, inputmode: string) =
     enterkeyhint: 'next',
     value,
     placeholder: o.placeholder,
+    title: o.title,
     'data-focus': o.focus,
   });
 
@@ -77,7 +85,7 @@ export function lengthField(
     o.onCommit,
     format,
   );
-  return field(o.label, input, o.className, o.units === 'mm' ? 'mm' : 'in');
+  return field(o.label, input, o.className, o.units === 'mm' ? 'mm' : 'in', o.title);
 }
 
 export function countField(o: FieldOptions<number | null>) {
@@ -92,7 +100,7 @@ export function countField(o: FieldOptions<number | null>) {
     },
     o.onCommit,
   );
-  return field(o.label, input, o.className);
+  return field(o.label, input, o.className, undefined, o.title);
 }
 
 export function textField(o: FieldOptions<string>) {

@@ -252,12 +252,14 @@ export function startApp(root: HTMLElement): void {
     fileInput,
   );
 
-  function setTab(tab: Tab) {
+  function setTab(tab: Tab, scrollToTop = window.matchMedia('(max-width: 899px)').matches) {
     document.body.dataset.tab = tab;
     for (const t of tabs.querySelectorAll('[role="tab"]')) {
       t.setAttribute('aria-selected', String(t.id === `tab-${tab}`));
     }
-    window.scrollTo({ top: 0 });
+    if (scrollToTop) {
+      window.scrollTo({ top: 0 });
+    }
   }
 
   const inputsCtx = {
@@ -276,6 +278,45 @@ export function startApp(root: HTMLElement): void {
       store.set(exampleProject(copy.example));
       undoable(copy.exampleLoaded, snapshot);
     },
+    onJumpToPart: (partId: string) => {
+      setTab('inputs', false);
+      const inputRow = inputsPanel.querySelector<HTMLElement>(
+        `.row[data-part-id="${CSS.escape(partId)}"]`,
+      );
+      if (inputRow) {
+        if (inputsPanel.scrollHeight > inputsPanel.clientHeight) {
+          const rowRect = inputRow.getBoundingClientRect();
+          const panelRect = inputsPanel.getBoundingClientRect();
+          const targetScroll =
+            inputsPanel.scrollTop +
+            (rowRect.top - panelRect.top) -
+            inputsPanel.clientHeight / 2 +
+            rowRect.height / 2;
+          inputsPanel.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+        } else {
+          inputRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        const firstInput = inputRow.querySelector<HTMLElement>('input');
+        firstInput?.focus({ preventScroll: true });
+        inputRow.classList.add('row-focused');
+        window.setTimeout(() => inputRow.classList.remove('row-focused'), 1200);
+      }
+    },
+  };
+
+  let unplacedPartIds = new Set<string>();
+
+  const updateUnplacedHighlights = () => {
+    for (const row of inputsPanel.querySelectorAll<HTMLElement>('.row[data-part-id]')) {
+      const id = row.dataset.partId;
+      const hasIssue = !!id && unplacedPartIds.has(id);
+      row.classList.toggle('row-unplaced', hasIssue);
+      if (hasIssue) {
+        row.setAttribute('title', copy.unplacedPartTooltip);
+      } else {
+        row.removeAttribute('title');
+      }
+    }
   };
 
   const celebrate = (result: OptimizeResult) => {
@@ -291,11 +332,16 @@ export function startApp(root: HTMLElement): void {
     renderResults(resultsPanel, result, project, resultsCtx);
     badge.hidden = result.totals.pieces === 0;
     badge.textContent = String(result.totals.pieces);
+    unplacedPartIds = new Set(result.materials.flatMap((m) => m.unplaced.map((u) => u.ref)));
+    updateUnplacedHighlights();
     celebrate(result);
   }, setFaviconBusy);
 
   store.subscribe((project, options) => {
-    if (options.structure) renderInputs(inputsPanel, inputsCtx, options.focus);
+    if (options.structure) {
+      renderInputs(inputsPanel, inputsCtx, options.focus);
+      updateUnplacedHighlights();
+    }
     if (nameInput.value !== project.name) nameInput.value = project.name;
     window.clearTimeout(optimizeTimer);
     optimizeTimer = window.setTimeout(() => optimizer.run(store.get()), 120);

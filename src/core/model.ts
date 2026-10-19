@@ -98,7 +98,7 @@ export function createMaterial(
     name,
     kind,
     stock: kind === 'sheet' ? [createSheetStock(units)] : [createStock(mm(2400))],
-    parts: [],
+    parts: [kind === 'sheet' ? createPart('', 0, 1, 0, 'any') : createPart()],
     planingLength: null,
     trimPerEnd: mm(20),
     grain: true,

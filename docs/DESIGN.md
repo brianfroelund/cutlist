@@ -15,7 +15,7 @@
 
 - **Typography:** a system sans for UI and a classic serif (Iowan Old Style, Charter, Palatino, Georgia) for headings, numbers in the summary, and the verdict. Use tabular numerals everywhere.
 - **Shapes:** 1 px rules, 6–10 px radii, no drop shadows.
-- **Parts are told apart by pattern, never color.** There are 8 patterns (`data-pattern` 0–7): plain, two diagonals, vertical lines, horizontal lines, dots, crosshatch and grid. Offcut is empty paper with a dashed outline. Kerf is a solid ink line. Trim is a dense hatch. Blanks have a double border.
+- **Parts are told apart by pattern, never color.** There are 8 patterns (`data-pattern` 0–7): plain, two diagonals, vertical lines, horizontal lines, dots, crosshatch and grid. Offcut is empty paper with a dashed outline. Kerf is a solid ink line. Trim is a dense hatch.
 
 ## Print
 
@@ -31,7 +31,7 @@ No controls are printed.
 
 - **< 600 px:** rows become small cards with visible labels. Part rows stack the label above length and quantity.
 - **< 900 px:** two tabs (Stock & parts / Cutlist) and a fixed bottom bar (Share, Print, Export, Import) within thumb reach.
-- **≥ 900 px:** two columns. Inputs on the left; results on the right, sticky and scrolling on their own.
+- **≥ 900 px:** two columns. Inputs on the left (sticky, staying in view); results on the right, scrolling naturally with the page.
 - Touch targets ≥ 44 px; input font 16 px; safe-area insets respected.
 
 ## Voice
@@ -54,6 +54,7 @@ Small, optional and never in the way. Each one respects `prefers-reduced-motion`
 | Rotating shop tips in the footer (tap for another)                                                                                                                                                  | `copy.tips`             |
 | Keyboard shortcuts (`?` for help)                                                                                                                                                                   | `ui/app.ts`             |
 | Drag the brand blade to saw the page apart: high-speed spin with teeth blur and speed arcs; halves fall away, Esc or "Tidy up" restores                                                             | `ui/delight/blade.ts`   |
+| Click any piece or cut list item to jump to and focus its row in the inputs                                                                                                                         | `ui/results.ts`         |
 | Workbench illustration in the empty state                                                                                                                                                           | `ui/icons.ts`           |
 
 Add a new touch only if it is cheap, optional and fits the voice. Add it to this table.
