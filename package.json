@@ -2,7 +2,7 @@
   "name": "cutlist",
   "private": true,
   "version": "0.1.0",
-  "description": "A simple, friendly linear cutlist optimizer for woodworkers.",
+  "description": "A simple, friendly cut list optimizer for woodworkers — boards and sheet goods.",
   "type": "module",
   "scripts": {
     "dev": "vite",

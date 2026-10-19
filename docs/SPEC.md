@@ -4,7 +4,7 @@ This is the source of truth for behaviour. Update it in the same change as the c
 
 ## Goal
 
-A very simple tool for planning linear cuts in woodworking, similar to Opticutter's linear mode. It works offline, on a phone in the shop and on a laptop at the desk, and prints a clean cutlist.
+A simple, fast tool for planning linear board (1D) and sheet goods (2D) cuts in woodworking. It works offline, on a phone in the shop and on a laptop at the desk, and prints a clean, pattern-coded cutlist.
 
 ## Concepts
 

@@ -1,7 +1,7 @@
 {
   "name": "cutlist",
   "short_name": "cutlist",
-  "description": "A simple linear cutlist optimizer for woodworkers.",
+  "description": "A simple cut list optimizer for woodworkers — boards and sheet goods.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

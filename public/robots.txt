@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /cutlist/
+
+Sitemap: https://brianfroelund.github.io/cutlist/sitemap.xml

@@ -6,7 +6,11 @@
     <title>cutlist — free cut list optimizer for woodworking</title>
     <meta
       name="description"
-      content="Free, simple cut list optimizer for woodworkers. Enter your boards and parts, set the saw kerf and get an optimized, printable cutting plan — with optional rough-cut-to-planing-length blanks. Works offline, mm or inches."
+      content="Free, simple cut list optimizer for woodworkers. Optimize dimensional lumber, boards and 2D sheet goods (plywood, MDF, panels). Kerf-aware, grain direction, edge trim, planing blanks and printable cutting plans. Works offline, mm or inches."
+    />
+    <meta
+      name="keywords"
+      content="cut list optimizer, cutlist, woodworking, sheet goods, plywood cut list, linear cut list, lumber cut calculator, table saw, track saw, guillotine cuts, panel cutting, saw kerf"
     />
     <link rel="canonical" href="https://brianfroelund.github.io/cutlist/" />
     <meta name="theme-color" content="#fdf6e3" media="(prefers-color-scheme: light)" />
@@ -21,7 +25,7 @@
     <meta property="og:title" content="cutlist — free cut list optimizer for woodworking" />
     <meta
       property="og:description"
-      content="Enter your boards and parts, set the kerf, get an optimized printable cutting plan. Plans rough cuts to planing length too."
+      content="Enter your boards and sheet goods, set the kerf, and get an optimized printable cutting plan. Supports 1D lumber, 2D plywood panels, grain direction, and rough-cut planing blanks."
     />
     <meta property="og:url" content="https://brianfroelund.github.io/cutlist/" />
     <meta property="og:image" content="https://brianfroelund.github.io/cutlist/og.png" />
@@ -29,9 +33,15 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="cutlist: boards drawn to scale with parts, kerfs and offcuts"
+      content="cutlist: boards and sheet goods drawn to scale with parts, kerfs and offcuts"
     />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="cutlist — free cut list optimizer for woodworking" />
+    <meta
+      name="twitter:description"
+      content="Free cut list optimizer for woodworkers. 1D boards, 2D sheet goods, grain direction, kerf-aware nesting, and printable cut plans."
+    />
+    <meta name="twitter:image" content="https://brianfroelund.github.io/cutlist/og.png" />
 
     <script type="application/ld+json">
       {
@@ -39,19 +49,24 @@
         "@type": "WebApplication",
         "name": "cutlist",
         "url": "https://brianfroelund.github.io/cutlist/",
-        "description": "Free linear (1D) cut list optimizer for woodworking: boards, parts, saw kerf, planing blanks and printable cutting plans.",
+        "description": "Free 1D linear and 2D sheet goods cut list optimizer for woodworking: boards, plywood panels, saw kerf, grain direction, planing blanks and printable cutting plans.",
         "applicationCategory": "DesignApplication",
         "operatingSystem": "Any (web browser)",
         "isAccessibleForFree": true,
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "featureList": [
-          "Cut list optimization for boards of several lengths",
-          "Saw kerf aware",
+          "Linear (1D) cut list optimization for lumber and boards of several lengths",
+          "2D sheet goods optimizer for plywood, MDF and panels",
+          "Guillotine through-cuts for table saws and track saws",
+          "Nested cut layouts for CNC routing",
+          "Grain direction constraints (length, width, or any)",
+          "Edge trim deduction for factory sheet edges",
+          "Saw kerf aware with offcut and waste calculations",
           "Rough cut to planing length, then cut to final length",
-          "Several materials per project",
-          "Printable greyscale cutting plan and parts list",
+          "Several materials and stock sizes per project",
+          "Printable greyscale cutting plans and parts list with checkboxes",
           "Millimetres or inches with fractions",
-          "Works offline"
+          "Works offline as a Progressive Web App (PWA)"
         ]
       }
     </script>
@@ -62,14 +77,20 @@
       <main class="seo-fallback">
         <h1>cutlist — free cut list optimizer for woodworking</h1>
         <p>
-          Plan your cuts before you pick up the saw. List the boards you have and the parts you
-          need, set the saw kerf, and cutlist works out how to cut every part with the least waste.
-          Print a clean cutting plan with a parts list and tick off cuts in the shop.
+          Plan your cuts before you pick up the saw. List the boards and sheet goods you have and
+          the parts you need, set the saw kerf, and cutlist works out how to cut every part with the
+          least waste. Print a clean cutting plan with a parts list and tick off cuts in the shop.
         </p>
         <ul>
           <li>Linear (1D) cutting optimizer for lumber, boards, battens and trim</li>
-          <li>Several stock lengths and materials in one project</li>
-          <li>Kerf-aware; shows offcuts and waste</li>
+          <li>
+            2D sheet goods optimizer for plywood, MDF and panels with grain direction and edge trim
+          </li>
+          <li>
+            Guillotine through-cuts for table and track saws plus nested layouts for CNC routers
+          </li>
+          <li>Several stock lengths, sheet sizes and materials in one project</li>
+          <li>Kerf-aware calculation showing usable offcuts and total waste percentage</li>
           <li>Rough-cut to an ideal planing length, plane, then cut to final length</li>
           <li>
             Millimetres or inches (fractions welcome); works on phone and laptop, even offline

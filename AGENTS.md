@@ -4,7 +4,7 @@ Guidance for AI agents (and humans) working on **cutlist**. Everything in this r
 
 ## What this is
 
-A static, client-only web app that plans linear (1D) cuts for woodworking. You enter the stock you have and the parts you need, and it produces an optimized, printable cutlist. Optionally it adds a two-stage plan: rough-cut to planing blanks, then cut the blanks to final parts. It is hosted on GitHub Pages at https://brianfroelund.github.io/cutlist/.
+A static, client-only web app that plans linear (1D) boards and sheet goods (2D) cuts for woodworking. You enter the stock you have and the parts you need, and it produces an optimized, printable cutlist. Optionally it adds a two-stage plan: rough-cut to planing blanks, then cut the blanks to final parts. It is hosted on GitHub Pages at https://brianfroelund.github.io/cutlist/.
 
 | Doc                                          | Read it when…                                              |
 | -------------------------------------------- | ---------------------------------------------------------- |
