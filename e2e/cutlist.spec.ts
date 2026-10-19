@@ -1,8 +1,23 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function addPart(page: Page, label: string, length: string, qty: string) {
+  const parts = page.getByTestId('part-row');
+  const count = await parts.count();
+  let row = parts.first();
+  if (count === 1) {
+    const existingLabel = await row
+      .getByRole('textbox', { name: 'Part', exact: true })
+      .inputValue();
+    const existingQty = await row.getByRole('textbox', { name: 'Qty', exact: true }).inputValue();
+    if (existingLabel === 'Leg' && existingQty === '2') {
+      await row.getByRole('textbox', { name: 'Part', exact: true }).fill(label);
+      await row.getByRole('textbox', { name: 'Length', exact: true }).fill(length);
+      await row.getByRole('textbox', { name: 'Qty', exact: true }).fill(qty);
+      return;
+    }
+  }
   await page.getByRole('button', { name: 'Add part' }).first().click();
-  const row = page.getByTestId('part-row').last();
+  row = parts.last();
   await row.getByRole('textbox', { name: 'Part', exact: true }).fill(label);
   await row.getByRole('textbox', { name: 'Length', exact: true }).fill(length);
   await row.getByRole('textbox', { name: 'Qty', exact: true }).fill(qty);
@@ -15,7 +30,7 @@ async function showResults(page: Page, isMobile: boolean) {
 test('builds a cutlist that survives a reload', async ({ page, isMobile }) => {
   await page.goto('./');
   await showResults(page, isMobile);
-  await expect(page.getByText('Nothing to cut yet')).toBeVisible();
+  await expect(page.getByTestId('total-boards')).toHaveText('1');
   if (isMobile) await page.getByRole('tab', { name: /Stock & parts/ }).click();
 
   await addPart(page, 'Leg', '700', '6');
@@ -32,6 +47,8 @@ test('builds a cutlist that survives a reload', async ({ page, isMobile }) => {
 
 test('loads the example and plans planing blanks', async ({ page, isMobile }) => {
   await page.goto('./');
+  if (isMobile) await page.getByRole('tab', { name: /Stock & parts/ }).click();
+  await page.getByRole('button', { name: 'Remove part' }).click();
   await showResults(page, isMobile);
   await page.getByRole('button', { name: 'Show me an example' }).click();
   await expect(page.getByText('Plane, then cut blanks to parts')).toBeVisible();
@@ -109,6 +126,7 @@ test('undo restores a removed part', async ({ page }) => {
 
 test('pasting spreadsheet rows adds parts', async ({ page, isMobile }) => {
   await page.goto('./');
+  await page.getByRole('button', { name: 'Remove part' }).click();
   await page.getByRole('button', { name: 'Add part' }).first().click();
   await page
     .getByTestId('part-row')
@@ -134,8 +152,7 @@ test.describe('in Danish', () => {
   test('speaks Danish and reads decimal commas', async ({ page, isMobile }) => {
     await page.goto('./');
     await expect(page.getByRole('button', { name: 'Tilføj del' })).toBeVisible();
-    await page.getByRole('button', { name: 'Tilføj del' }).click();
-    const row = page.getByTestId('part-row').last();
+    const row = page.getByTestId('part-row').first();
     await row.getByRole('textbox', { name: 'Længde', exact: true }).fill('1100,5');
     await row.getByRole('textbox', { name: 'Antal', exact: true }).fill('2');
     await showResults(page, isMobile);
@@ -173,6 +190,7 @@ test('stock completion supports keyboard, reduced motion and print', async ({ pa
   await page.goto('./');
   await addPart(page, 'Leg', '700', '6');
   await showResults(page, isMobile);
+  await expect(page.getByTestId('total-boards')).toHaveText('2');
   const board = page.getByTestId('board');
   const complete = board.getByRole('checkbox');
   await expect(complete).toHaveCount(1);
@@ -201,7 +219,6 @@ test('stock completion supports keyboard, reduced motion and print', async ({ pa
 
 test('the printout carries a QR code back to the project', async ({ page, isMobile }) => {
   await page.goto('./');
-  await addPart(page, 'Leg', '700', '2');
   await showResults(page, isMobile);
   await expect(page.getByTestId('total-boards')).toHaveText('1');
   await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
@@ -229,4 +246,60 @@ test('holding the brand mark spins the saw blade fast with motion indicators', a
   await page.screenshot({ path: test.info().outputPath('saw-blade-dragged.png') });
   await page.mouse.up();
   await expect(blade).not.toBeVisible();
+});
+
+test('tabbing through a part skips delete and creates new row from last field', async ({
+  page,
+  isMobile,
+}) => {
+  if (isMobile) return;
+  await page.goto('./');
+  const partRow = page.getByTestId('part-row').first();
+  const labelInput = partRow.getByRole('textbox', { name: 'Part', exact: true });
+  await labelInput.focus();
+  await page.keyboard.press('Tab');
+  await expect(partRow.getByRole('textbox', { name: 'Length', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(partRow.getByRole('textbox', { name: 'Qty', exact: true })).toBeFocused();
+
+  // Tabbing from the last field of the last row creates a new row and focuses its label
+  const partCountBefore = await page.getByTestId('part-row').count();
+  await page.keyboard.press('Tab');
+  await expect(page.getByTestId('part-row')).toHaveCount(partCountBefore + 1);
+  const newPartRow = page.getByTestId('part-row').last();
+  await expect(newPartRow.getByRole('textbox', { name: 'Part', exact: true })).toBeFocused();
+
+  // Test that it works consecutively: fill in the new row and tab again
+  await page.keyboard.type('Shelf');
+  await page.keyboard.press('Tab');
+  await page.keyboard.type('600');
+  await page.keyboard.press('Tab');
+  await page.keyboard.type('4');
+  await page.keyboard.press('Tab');
+  await expect(page.getByTestId('part-row')).toHaveCount(partCountBefore + 2);
+  const thirdPartRow = page.getByTestId('part-row').last();
+  await expect(thirdPartRow.getByRole('textbox', { name: 'Part', exact: true })).toBeFocused();
+
+  // Ensure add buttons have tabindex="-1" so they are excluded from tab order
+  await expect(page.getByRole('button', { name: 'Add part' }).first()).toHaveAttribute(
+    'tabindex',
+    '-1',
+  );
+  await expect(page.getByRole('button', { name: 'Add board length' }).first()).toHaveAttribute(
+    'tabindex',
+    '-1',
+  );
+
+  // Same behavior applies to stock rows
+  const stockRow = page.getByTestId('stock-row').first();
+  const stockLengthInput = stockRow.getByRole('textbox', { name: 'Length', exact: true });
+  await stockLengthInput.focus();
+  await page.keyboard.press('Tab');
+  await expect(stockRow.getByRole('textbox', { name: 'Qty', exact: true })).toBeFocused();
+
+  const stockCountBefore = await page.getByTestId('stock-row').count();
+  await page.keyboard.press('Tab');
+  await expect(page.getByTestId('stock-row')).toHaveCount(stockCountBefore + 1);
+  const newStockRow = page.getByTestId('stock-row').last();
+  await expect(newStockRow.getByRole('textbox', { name: 'Length', exact: true })).toBeFocused();
 });

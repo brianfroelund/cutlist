@@ -655,13 +655,21 @@ a {
   border-radius: var(--radius-sm);
 }
 
-.row.row-focused {
-  border: 1px solid var(--focus);
-  background: color-mix(in srgb, var(--focus) 8%, transparent);
-  border-radius: var(--radius-sm);
-  transition:
-    background 0.3s,
-    border-color 0.3s;
+.row.row-focused input,
+.row.row-focused select {
+  animation: row-input-pulse 1.2s var(--ease) forwards;
+}
+
+@keyframes row-input-pulse {
+  0%,
+  30% {
+    background-color: color-mix(in srgb, var(--focus) 14%, var(--paper));
+    border-color: color-mix(in srgb, var(--focus) 60%, var(--rule));
+  }
+  100% {
+    background-color: var(--paper);
+    border-color: var(--rule);
+  }
 }
 
 .swipe {
@@ -702,6 +710,20 @@ a {
     padding: var(--space-2);
     border: 1px solid var(--rule);
     border-radius: var(--radius-sm);
+  }
+
+  .row.row-focused {
+    animation: row-card-pulse 1.2s var(--ease) forwards;
+  }
+
+  @keyframes row-card-pulse {
+    0%,
+    30% {
+      border-color: var(--focus);
+    }
+    100% {
+      border-color: var(--rule);
+    }
   }
 
   .stock-grid {
@@ -956,6 +978,9 @@ a {
   border-radius: 50%;
   font-family: var(--font-sans);
   font-size: 0.8rem;
+  line-height: 1;
+  font-variant-numeric: normal;
+  flex-shrink: 0;
 }
 
 .board {

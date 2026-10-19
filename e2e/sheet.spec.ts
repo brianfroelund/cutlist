@@ -16,8 +16,7 @@ test('creates a sheet material and optimizes 2D cuts', async ({ page, isMobile }
   await stockRow.getByRole('textbox', { name: 'Length', exact: true }).fill('2440');
   await stockRow.getByRole('textbox', { name: 'Width', exact: true }).fill('1220');
 
-  // Add Part 1
-  await page.getByRole('button', { name: 'Add part' }).first().click();
+  // Part 1 (pre-seeded row)
   const partRow1 = page.getByTestId('part-row').first();
   await partRow1.getByRole('textbox', { name: 'Part', exact: true }).fill('Shelf');
   await partRow1.getByRole('textbox', { name: 'Length', exact: true }).fill('1200');
@@ -64,7 +63,6 @@ test('sheet cutlist share link reproduces 2D project', async ({
   await stockRow.getByRole('textbox', { name: 'Length', exact: true }).fill('2440');
   await stockRow.getByRole('textbox', { name: 'Width', exact: true }).fill('1220');
 
-  await page.getByRole('button', { name: 'Add part' }).first().click();
   const partRow = page.getByTestId('part-row').first();
   await partRow.getByRole('textbox', { name: 'Part', exact: true }).fill('Desk Top');
   await partRow.getByRole('textbox', { name: 'Length', exact: true }).fill('1600');
@@ -97,7 +95,6 @@ test('identical sheets are grouped and display 2 × in heading', async ({ page, 
   await stockRow.getByRole('textbox', { name: 'Length', exact: true }).fill('2440');
   await stockRow.getByRole('textbox', { name: 'Width', exact: true }).fill('1220');
 
-  await page.getByRole('button', { name: 'Add part' }).first().click();
   const partRow = page.getByTestId('part-row').first();
   await partRow.getByRole('textbox', { name: 'Part', exact: true }).fill('Shelf');
   await partRow.getByRole('textbox', { name: 'Length', exact: true }).fill('1200');

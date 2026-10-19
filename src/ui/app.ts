@@ -341,6 +341,10 @@ export function startApp(root: HTMLElement): void {
     if (options.structure) {
       renderInputs(inputsPanel, inputsCtx, options.focus);
       updateUnplacedHighlights();
+    } else if (options.focus) {
+      inputsPanel
+        .querySelector<HTMLElement>(`[data-focus="${CSS.escape(options.focus)}"]`)
+        ?.focus();
     }
     if (nameInput.value !== project.name) nameInput.value = project.name;
     window.clearTimeout(optimizeTimer);

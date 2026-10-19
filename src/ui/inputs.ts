@@ -13,6 +13,7 @@ import {
   type StockItem,
   type UnitSystem,
 } from '../core/model';
+import { mm } from '../core/units';
 import { looksLikeTable, parsePastedParts, parsePastedSheetParts } from '../core/paste';
 import { attachSwipe } from './delight/swipe';
 import { h } from './dom';
@@ -220,7 +221,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
                     if (!s.width) s.width = DEFAULT_SHEET_WIDTH;
                   }
                   if (t.parts.length === 0) {
-                    t.parts.push(createPart('', 0, 1, 0, 'any'));
+                    t.parts.push(createPart('Shelf', mm(1200), 2, mm(600), 'any'));
                   }
                   for (const p of t.parts) {
                     if (!p.width)
@@ -230,7 +231,7 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
                   if (t.edgeTrim === undefined) t.edgeTrim = 0;
                   if (!t.cutStyle) t.cutStyle = 'guillotine';
                 } else if (t.parts.length === 0) {
-                  t.parts.push(createPart());
+                  t.parts.push(createPart('Leg', mm(700), 2));
                 }
               },
               { structure: true },
@@ -242,11 +243,21 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
     );
 
   const addStock = () => {
+    const empty = m.stock.find((s) => s.length === 0);
+    if (empty) {
+      edit(() => {}, { structure: false, focus: `${empty.id}:length` });
+      return;
+    }
     const stock = createStock();
     edit((t) => t.stock.push(stock), { structure: true, focus: `${stock.id}:length` });
   };
 
   const addSheetStock = () => {
+    const empty = m.stock.find((s) => s.length === 0 && (!s.width || s.width === 0));
+    if (empty) {
+      edit(() => {}, { structure: false, focus: `${empty.id}:length` });
+      return;
+    }
     const stock = createSheetStock();
     edit((t) => t.stock.push(stock), { structure: true, focus: `${stock.id}:length` });
   };
@@ -624,9 +635,26 @@ function section(
         columns.map((c) => h('span', {}, c)),
       ),
     h('div', { class: 'rows' }, rows),
-    h('button', { type: 'button', class: 'btn btn-add', onClick: onAdd }, icon('plus'), addLabel),
+    h(
+      'button',
+      { type: 'button', tabindex: -1, class: 'btn btn-add', onClick: onAdd },
+      icon('plus'),
+      addLabel,
+    ),
     footnote && h('p', { class: 'hint paste-hint' }, footnote),
   );
+}
+
+function isRowEmpty(el: HTMLElement): boolean {
+  const nameInput = el.querySelector<HTMLInputElement>('input[data-focus$=":label"]');
+  const lengthInput = el.querySelector<HTMLInputElement>('input[data-focus$=":length"]');
+  const widthInput = el.querySelector<HTMLInputElement>('input[data-focus$=":width"]');
+
+  const hasName = !!nameInput && nameInput.value.trim() !== '';
+  const hasLength = !!lengthInput && lengthInput.value.trim() !== '';
+  const hasWidth = !!widthInput && widthInput.value.trim() !== '';
+
+  return !hasName && !hasLength && !hasWidth;
 }
 
 function row(
@@ -649,6 +677,7 @@ function row(
       'button',
       {
         type: 'button',
+        tabindex: -1,
         class: 'btn btn-ghost btn-icon remove',
         'aria-label': removeLabel,
         onClick: onRemove,
@@ -658,18 +687,37 @@ function row(
   );
   const wrap = h('div', { class: 'swipe' }, el);
   attachSwipe(wrap, el, onRemove);
-  // Enter moves down a row, or adds a new one from the last row — spreadsheet style.
   el.addEventListener('keydown', (e) => {
-    if (
-      e.key !== 'Enter' ||
-      !(e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement)
-    )
+    if (!(e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement)) return;
+
+    if (e.altKey && (e.key === 'Backspace' || e.key === 'Delete')) {
+      e.preventDefault();
+      onRemove();
       return;
-    e.preventDefault();
-    const field = e.target.dataset.focus?.split(':')[1];
-    const next = wrap.nextElementSibling?.querySelector<HTMLElement>(`[data-focus$=":${field}"]`);
-    if (next) next.focus();
-    else onEnterLast();
+    }
+
+    // Enter moves down a row, or adds a new one from the last row — spreadsheet style.
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const field = e.target.dataset.focus?.split(':')[1];
+      const next = wrap.nextElementSibling?.querySelector<HTMLElement>(`[data-focus$=":${field}"]`);
+      if (next) next.focus();
+      else onEnterLast();
+      return;
+    }
+
+    // Tab on the last field of the last row adds a new row if the current row has content.
+    if (e.key === 'Tab' && !e.shiftKey) {
+      const inputs = Array.from(
+        el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select'),
+      );
+      const isLastField = inputs[inputs.length - 1] === e.target;
+      const isLastRow = !wrap.nextElementSibling;
+      if (isLastField && isLastRow && !isRowEmpty(el)) {
+        e.preventDefault();
+        onEnterLast();
+      }
+    }
   });
   return wrap;
 }
