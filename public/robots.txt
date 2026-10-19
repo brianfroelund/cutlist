@@ -1,5 +1,4 @@
 User-agent: *
-Allow: /cutlist/
+Allow: /
 
 Sitemap: https://brianfroelund.github.io/cutlist/sitemap.xml
-

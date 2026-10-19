@@ -8,7 +8,7 @@ Candidates, roughly in priority order. Move an item into SPEC.md when you implem
 - [ ] PNG icons (192/512) for better install support on iOS and Android.
 - [ ] Per-part "grain/defect" notes shown on the cut list.
 - [ ] Reorder parts and materials (drag handle and keyboard).
-- [ ] Right-to-left languages (Arabic, Hebrew) and per-language URLs for search engines.
+- [ ] Right-to-left languages (Arabic, Hebrew).
 
 ## Later
 

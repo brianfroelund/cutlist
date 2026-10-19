@@ -32,7 +32,7 @@ A simple, fast tool for planning linear board (1D) and sheet goods (2D) cuts in 
 - S3. A project can hold several materials; each is optimized independently.
 - S4. Empty, zero or invalid rows are ignored by the optimizer. Invalid fields are marked but never block other edits.
 - S8. Spreadsheet paste: pasting rows or columns into a part field, or anywhere outside a field, adds parts to that material. Paste into an empty row and the rows replace it. Columns are name, length, quantity. Tab, semicolon and comma separators work, as do quoted cells, a header row and `pcs`/`stk`/`x` quantity suffixes. Length + quantity or a single length column also works. Unreadable rows are skipped and counted. The paste can be undone.
-- S9. Languages: en, da, sv, nb, de, nl, fr, es, it, pt, pl, ja and zh. The language is detected from the browser, can be overridden from a quiet selector in the footer, and the override is remembered. Numbers show the locale's decimal separator, and input accepts a decimal comma plus thousands separators (`1.200,5`).
+- S9. Languages: en, da, sv, nb, de, nl, fr, es, it, pt, pl, ja and zh. The language is detected from the `?lang=` query parameter (if valid) or the browser, can be overridden from a quiet selector in the footer, and the override is remembered. Numbers show the locale's decimal separator, and input accepts a decimal comma plus thousands separators (`1.200,5`).
 - S5. Enter in a row moves to the same field in the next row, or adds a new row from the last one.
 - S6. Removing anything shows an Undo toast. There are no confirmation dialogs for deletes.
 - S7. On touch devices a row can be swiped left to delete it.

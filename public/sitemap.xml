@@ -1,7 +1,249 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://brianfroelund.github.io/cutlist/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=da</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=sv</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=nb</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=de</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=nl</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=fr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=es</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=it</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=pt</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=pl</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=ja</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://brianfroelund.github.io/cutlist/?lang=zh</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da"/>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://brianfroelund.github.io/cutlist/?lang=zh"/>
     <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
   </url>

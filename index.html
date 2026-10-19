@@ -13,6 +13,24 @@
       content="cut list optimizer, cutlist, woodworking, sheet goods, plywood cut list, linear cut list, lumber cut calculator, table saw, track saw, guillotine cuts, panel cutting, saw kerf"
     />
     <link rel="canonical" href="https://brianfroelund.github.io/cutlist/" />
+    <link rel="alternate" hreflang="x-default" href="https://brianfroelund.github.io/cutlist/" />
+    <link rel="alternate" hreflang="en" href="https://brianfroelund.github.io/cutlist/" />
+    <link rel="alternate" hreflang="da" href="https://brianfroelund.github.io/cutlist/?lang=da" />
+    <link rel="alternate" hreflang="sv" href="https://brianfroelund.github.io/cutlist/?lang=sv" />
+    <link rel="alternate" hreflang="nb" href="https://brianfroelund.github.io/cutlist/?lang=nb" />
+    <link rel="alternate" hreflang="de" href="https://brianfroelund.github.io/cutlist/?lang=de" />
+    <link rel="alternate" hreflang="nl" href="https://brianfroelund.github.io/cutlist/?lang=nl" />
+    <link rel="alternate" hreflang="fr" href="https://brianfroelund.github.io/cutlist/?lang=fr" />
+    <link rel="alternate" hreflang="es" href="https://brianfroelund.github.io/cutlist/?lang=es" />
+    <link rel="alternate" hreflang="it" href="https://brianfroelund.github.io/cutlist/?lang=it" />
+    <link rel="alternate" hreflang="pt" href="https://brianfroelund.github.io/cutlist/?lang=pt" />
+    <link rel="alternate" hreflang="pl" href="https://brianfroelund.github.io/cutlist/?lang=pl" />
+    <link rel="alternate" hreflang="ja" href="https://brianfroelund.github.io/cutlist/?lang=ja" />
+    <link
+      rel="alternate"
+      hreflang="zh-Hans"
+      href="https://brianfroelund.github.io/cutlist/?lang=zh"
+    />
     <meta name="theme-color" content="#fdf6e3" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#002b36" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
@@ -77,27 +95,83 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "cutlist",
-        "url": "https://brianfroelund.github.io/cutlist/",
-        "description": "Free 1D linear and 2D sheet goods cut list optimizer for woodworking: boards, plywood panels, saw kerf, grain direction, planing blanks and printable cutting plans.",
-        "applicationCategory": "DesignApplication",
-        "operatingSystem": "Any (web browser)",
-        "isAccessibleForFree": true,
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "featureList": [
-          "Linear (1D) cut list optimization for lumber and boards of several lengths",
-          "2D sheet goods optimizer for plywood, MDF and panels",
-          "Guillotine through-cuts for table saws and track saws",
-          "Nested cut layouts for CNC routing",
-          "Grain direction constraints (length, width, or any)",
-          "Edge trim deduction for factory sheet edges",
-          "Saw kerf aware with offcut and waste calculations",
-          "Rough cut to planing length, then cut to final length",
-          "Several materials and stock sizes per project",
-          "Printable greyscale cutting plans and parts list with checkboxes",
-          "Millimetres or inches with fractions",
-          "Works offline as a Progressive Web App (PWA)"
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "cutlist",
+            "url": "https://brianfroelund.github.io/cutlist/",
+            "description": "Free 1D linear and 2D sheet goods cut list optimizer for woodworking: boards, plywood panels, saw kerf, grain direction, planing blanks and printable cutting plans.",
+            "applicationCategory": "DesignApplication",
+            "applicationSubCategory": "Woodworking",
+            "operatingSystem": "Any (web browser)",
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": {
+              "@type": "Person",
+              "name": "Brian Frølund",
+              "url": "https://github.com/brianfroelund"
+            },
+            "screenshot": "https://brianfroelund.github.io/cutlist/og.png",
+            "featureList": [
+              "Linear (1D) cut list optimization for lumber and boards of several lengths",
+              "2D sheet goods optimizer for plywood, MDF and panels",
+              "Guillotine through-cuts for table saws and track saws",
+              "Nested cut layouts for CNC routing",
+              "Grain direction constraints (length, width, or any)",
+              "Edge trim deduction for factory sheet edges",
+              "Saw kerf aware with offcut and waste calculations",
+              "Rough cut to planing length, then cut to final length",
+              "Several materials and stock sizes per project",
+              "Printable greyscale cutting plans and parts list with checkboxes",
+              "Millimetres or inches with fractions",
+              "Works offline as a Progressive Web App (PWA)"
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is cutlist free?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, cutlist is completely free, open source, and has no ads, subscription fees, or part limits. It works entirely in your browser and works offline."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does cutlist support both linear lumber and plywood sheet goods?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. You can optimize 1D dimensional lumber boards as well as 2D sheet goods (plywood, MDF, OSB, panels) with multiple stock sizes in a single project."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does it calculate saw kerf and edge trim?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Every cut accounts for your saw blade kerf width (e.g. 3 mm or 1/8 inch), and you can specify perimeter edge trim for factory sheet edges."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can it produce cutting diagrams for table saws and track saws?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Guillotine cutting mode ensures edge-to-edge through-cuts suitable for table saws and track saws, while nested mode optimizes freeform packing for CNC routers."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does it support grain direction?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Parts can be locked along the wood grain, across the grain, or set to any orientation to maximize material yield."
+                }
+              }
+            ]
+          }
         ]
       }
     </script>
@@ -127,6 +201,36 @@
             Millimetres or inches (fractions welcome); works on phone and laptop, even offline
           </li>
         </ul>
+        <section>
+          <h2>Frequently Asked Questions</h2>
+          <dl>
+            <dt>Is cutlist free?</dt>
+            <dd>
+              Yes, cutlist is completely free, open source, and has no ads, subscription fees, or
+              part limits. It works entirely in your browser and works offline.
+            </dd>
+            <dt>Does cutlist support both linear lumber and plywood sheet goods?</dt>
+            <dd>
+              Yes. You can optimize 1D dimensional lumber boards as well as 2D sheet goods (plywood,
+              MDF, OSB, panels) with multiple stock sizes in a single project.
+            </dd>
+            <dt>Does it calculate saw kerf and edge trim?</dt>
+            <dd>
+              Yes. Every cut accounts for your saw blade kerf width (e.g. 3 mm or 1/8 inch), and you
+              can specify perimeter edge trim for factory sheet edges.
+            </dd>
+            <dt>Can it produce cutting diagrams for table saws and track saws?</dt>
+            <dd>
+              Yes. Guillotine cutting mode ensures edge-to-edge through-cuts suitable for table saws
+              and track saws, while nested mode optimizes freeform packing for CNC routers.
+            </dd>
+            <dt>Does it support grain direction?</dt>
+            <dd>
+              Yes. Parts can be locked along the wood grain, across the grain, or set to any
+              orientation to maximize material yield.
+            </dd>
+          </dl>
+        </section>
       </main>
     </div>
     <noscript>cutlist needs JavaScript to do its sums.</noscript>

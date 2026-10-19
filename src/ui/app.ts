@@ -211,7 +211,17 @@ export function startApp(root: HTMLElement): void {
       onChange: () => {
         if (!isLocaleCode(language.value) || language.value === locale) return;
         setLocale(language.value);
-        window.location.reload();
+        const url = new URL(window.location.href);
+        if (language.value === 'en') {
+          url.searchParams.delete('lang');
+        } else {
+          url.searchParams.set('lang', language.value);
+        }
+        if (url.toString() !== window.location.href) {
+          window.location.href = url.toString();
+        } else {
+          window.location.reload();
+        }
       },
     },
     Object.entries(LANGUAGES).map(([code, name]) =>

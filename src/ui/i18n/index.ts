@@ -48,6 +48,16 @@ export let locale: Locale = 'en';
 
 function detect(): Locale {
   try {
+    const param = new URLSearchParams(window.location.search).get('lang')?.toLowerCase();
+    if (param) {
+      const base = param.split('-')[0]!;
+      const match = isLocale(base) ? base : ALIASES[base];
+      if (match) return match;
+    }
+  } catch {
+    // search params unavailable
+  }
+  try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored && isLocale(stored)) return stored;
   } catch {
@@ -70,6 +80,13 @@ export async function initLocale(): Promise<void> {
     copy = en;
   }
   document.documentElement.lang = locale === 'zh' ? 'zh-Hans' : locale;
+  const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (canonical) {
+    canonical.href =
+      locale === 'en'
+        ? 'https://brianfroelund.github.io/cutlist/'
+        : `https://brianfroelund.github.io/cutlist/?lang=${locale}`;
+  }
 }
 
 export function setLocale(next: Locale): void {
