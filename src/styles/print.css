@@ -134,8 +134,7 @@
     padding-left: 0;
   }
 
-  .parts-list .num,
-  .parts-list th:nth-child(n + 3) {
+  .parts-list .num {
     text-align: right;
   }
 
