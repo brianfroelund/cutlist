@@ -7,7 +7,7 @@ import { validateProject, type Issue } from '../core/validate';
 import { captureRects, playFlip } from './delight/flip';
 import { h } from './dom';
 import { copy, fmtArea, fmtDate, fmtLength, fmtPct, fmtSize, fmtTotal } from './i18n';
-import { sawhorse } from './icons';
+import { workbench } from './icons';
 
 export interface ResultsContext {
   onExample(): void;
@@ -72,7 +72,7 @@ function emptyState(ctx: ResultsContext) {
   return h(
     'div',
     { class: 'card empty' },
-    sawhorse(),
+    workbench(),
     h('h2', {}, copy.emptyTitle),
     h('p', {}, copy.emptyBody),
     h('button', { type: 'button', class: 'btn', onClick: ctx.onExample }, copy.loadExample),

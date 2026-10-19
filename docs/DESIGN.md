@@ -54,6 +54,6 @@ Small, optional and never in the way. Each one respects `prefers-reduced-motion`
 | Rotating shop tips in the footer (tap for another)                                                                                                                                                  | `copy.tips`             |
 | Keyboard shortcuts (`?` for help)                                                                                                                                                                   | `ui/app.ts`             |
 | Drag the brand blade to saw the page apart; halves fall away, Esc or "Tidy up" restores                                                                                                             | `ui/delight/blade.ts`   |
-| Sawhorse illustration in the empty state                                                                                                                                                            | `ui/icons.ts`           |
+| Workbench illustration in the empty state                                                                                                                                                           | `ui/icons.ts`           |
 
 Add a new touch only if it is cheap, optional and fits the voice. Add it to this table.

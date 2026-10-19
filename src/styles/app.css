@@ -1424,12 +1424,18 @@ body.sawing * {
   }
 }
 
-/* Static text in index.html for crawlers; replaced when the app starts. */
+/* Static text in index.html for crawlers; visually hidden so it doesn't flash before the app mounts. */
 .seo-fallback {
-  max-width: 62ch;
-  margin: 48px auto;
-  padding: 0 var(--space-4);
-  color: var(--ink-soft);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .footer-language {

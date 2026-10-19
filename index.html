@@ -19,6 +19,37 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <link rel="stylesheet" href="/src/styles/app.css" />
+    <style>
+      :root {
+        --paper: #fdf6e3;
+        --ink: #073642;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #002b36;
+          --ink: #93a1a1;
+        }
+      }
+      html,
+      body {
+        background-color: var(--paper);
+        color: var(--ink);
+      }
+      .seo-fallback {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="cutlist" />
