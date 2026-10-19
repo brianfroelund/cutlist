@@ -58,6 +58,7 @@ function parseStock(v: unknown): StockItem {
     id: id(v.id),
     length: length(v.length, 'stock length', true),
     quantity: v.quantity === null ? null : quantity(v.quantity, 'stock quantity'),
+    width: v.width === undefined ? 0 : length(v.width, 'stock width', true),
   };
 }
 
@@ -68,6 +69,8 @@ function parsePart(v: unknown): Part {
     label: text(v.label),
     length: length(v.length, 'part length', true),
     quantity: quantity(v.quantity, 'part quantity'),
+    width: v.width === undefined ? 0 : length(v.width, 'part width', true),
+    grain: v.grain === 'width' || v.grain === 'any' ? v.grain : 'length',
   };
 }
 
@@ -76,17 +79,45 @@ function parseMaterial(v: unknown): Material {
   return {
     id: id(v.id),
     name: text(v.name, 'Material'),
+    kind: v.kind === 'sheet' ? 'sheet' : 'linear',
     stock: list(v.stock, MAX_ROWS, 'stock', parseStock),
     parts: list(v.parts, MAX_ROWS, 'parts', parsePart),
     planingLength: v.planingLength === null ? null : length(v.planingLength, 'planing length'),
     trimPerEnd: length(v.trimPerEnd, 'trim', true),
+    grain: v.grain !== false,
+    edgeTrim: v.edgeTrim === undefined ? 0 : length(v.edgeTrim, 'edge trim', true),
+    cutStyle: v.cutStyle === 'nested' ? 'nested' : 'guillotine',
   };
 }
 
 /** Upgrades older documents to the current schema. Add a step here when SCHEMA_VERSION changes. */
 function migrate(data: Json): Json {
-  if (data.version === SCHEMA_VERSION) return data;
-  throw new ProjectFormatError(`Unsupported project version: ${String(data.version)}`);
+  let doc = data;
+  if (doc.version === 1) {
+    const materials = Array.isArray(doc.materials)
+      ? doc.materials.map((m) => {
+          if (!isObject(m)) return m;
+          const stock = Array.isArray(m.stock)
+            ? m.stock.map((s) => (isObject(s) ? { ...s, width: 0 } : s))
+            : [];
+          const parts = Array.isArray(m.parts)
+            ? m.parts.map((p) => (isObject(p) ? { ...p, width: 0, grain: 'length' } : p))
+            : [];
+          return {
+            ...m,
+            kind: 'linear',
+            grain: true,
+            edgeTrim: 0,
+            cutStyle: 'guillotine',
+            stock,
+            parts,
+          };
+        })
+      : [];
+    doc = { ...doc, version: 2, materials };
+  }
+  if (doc.version === SCHEMA_VERSION) return doc;
+  throw new ProjectFormatError(`Unsupported project version: ${String(doc.version)}`);
 }
 
 /** Validates untrusted input (files, share links, localStorage) into a Project. */

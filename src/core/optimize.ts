@@ -1,4 +1,4 @@
-import type { Length, Material, Project } from './model';
+import type { Area, Length, Material, Project } from './model';
 import {
   compareScores,
   pack,
@@ -8,9 +8,17 @@ import {
   type PackOptions,
   type PackResult,
 } from './pack';
+import {
+  expandSheetParts,
+  pack2d,
+  type Pack2DOptions,
+  type SheetItem,
+  type SheetLayout,
+} from './pack2d';
 import { blankSets, isBlank, type Blank } from './planing';
+import type { Rect } from './rect';
 
-export type UnplacedReason = 'too-long' | 'out-of-stock' | 'no-stock';
+export type UnplacedReason = 'too-long' | 'out-of-stock' | 'no-stock' | 'too-large' | 'grain';
 
 export interface Unplaced {
   ref: string;
@@ -18,11 +26,19 @@ export interface Unplaced {
   length: Length;
   count: number;
   reason: UnplacedReason;
+  width?: Length;
 }
 
 export interface StockUse {
   stockId: string;
   length: Length;
+  count: number;
+}
+
+export interface SheetUse {
+  stockId: string;
+  length: Length;
+  width: Length;
   count: number;
 }
 
@@ -36,7 +52,17 @@ export interface Stats {
   largestOffcut: Length;
 }
 
+export interface SheetStats {
+  sheets: number;
+  stockArea: Area;
+  partArea: Area;
+  waste: Area;
+  wastePct: number;
+  largestOffcut: Rect | null;
+}
+
 export interface MaterialResult {
+  kind: 'linear';
   materialId: string;
   name: string;
   boards: Bin<PackItem | Blank>[];
@@ -47,9 +73,28 @@ export interface MaterialResult {
   stats: Stats;
 }
 
+export interface SheetMaterialResult {
+  kind: 'sheet';
+  materialId: string;
+  name: string;
+  sheets: SheetLayout[];
+  unplaced: Unplaced[];
+  shopping: SheetUse[];
+  stats: SheetStats;
+}
+
+export type AnyMaterialResult = MaterialResult | SheetMaterialResult;
+
+export interface Totals {
+  linear: Stats | null;
+  sheet: SheetStats | null;
+  pieces: number;
+  wastePct: number;
+}
+
 export interface OptimizeResult {
-  materials: MaterialResult[];
-  totals: Stats;
+  materials: AnyMaterialResult[];
+  totals: Totals;
 }
 
 export const DEFAULT_OPTIONS: PackOptions = { attempts: 16, seed: 1 };
@@ -90,6 +135,31 @@ function groupUnplaced(entries: { item: PackItem; reason: UnplacedReason }[]): U
     if (existing) existing.count++;
     else
       groups.set(key, { ref: item.ref, label: item.label, length: item.length, count: 1, reason });
+  }
+  return [...groups.values()];
+}
+
+function groupSheetUnplaced(
+  entries: { item: SheetItem; reason: UnplacedReason }[],
+  material: Material,
+): Unplaced[] {
+  const groups = new Map<string, Unplaced>();
+  for (const { item, reason } of entries) {
+    const key = `${item.ref}:${reason}`;
+    const existing = groups.get(key);
+    if (existing) {
+      existing.count++;
+    } else {
+      const sourcePart = material.parts.find((p) => p.id === item.ref);
+      groups.set(key, {
+        ref: item.ref,
+        label: item.label,
+        length: sourcePart ? sourcePart.length : item.w,
+        width: sourcePart ? sourcePart.width : item.h,
+        count: 1,
+        reason,
+      });
+    }
   }
   return [...groups.values()];
 }
@@ -158,6 +228,7 @@ export function optimizeMaterial(
   );
 
   return {
+    kind: 'linear',
     materialId: material.id,
     name: material.name,
     boards,
@@ -179,15 +250,161 @@ function makeStats(s: Omit<Stats, 'waste' | 'wastePct'>): Stats {
   return { ...s, waste, wastePct };
 }
 
+export function optimizeSheetMaterial(
+  material: Material,
+  kerf: Length,
+  options: PackOptions = DEFAULT_OPTIONS,
+): SheetMaterialResult {
+  const items = expandSheetParts(material);
+  const validStock = material.stock.filter(
+    (s) => s.length > 0 && s.width > 0 && (s.quantity === null || s.quantity > 0),
+  );
+
+  const packOpts: Pack2DOptions = {
+    attempts: options.attempts ?? 16,
+    seed: options.seed ?? 1,
+    style: material.cutStyle,
+    kerf,
+    edgeTrim: material.edgeTrim,
+  };
+
+  const result = pack2d(items, validStock, packOpts);
+
+  const reasonFor = (item: SheetItem): UnplacedReason => {
+    if (validStock.length === 0) return 'no-stock';
+    let fitsUnrotated = false;
+    let fitsRotated = false;
+    for (const s of validStock) {
+      const usableW = s.length - 2 * material.edgeTrim;
+      const usableH = s.width - 2 * material.edgeTrim;
+      if (item.w <= usableW && item.h <= usableH) fitsUnrotated = true;
+      if (item.h <= usableW && item.w <= usableH) fitsRotated = true;
+    }
+    if (item.rotatable) {
+      if (!fitsUnrotated && !fitsRotated) return 'too-large';
+    } else {
+      if (!fitsUnrotated) {
+        return fitsRotated ? 'grain' : 'too-large';
+      }
+    }
+    return 'out-of-stock';
+  };
+
+  const missing = result.unplaced.map((item) => ({ item, reason: reasonFor(item) }));
+
+  const shopping = new Map<string, SheetUse>();
+  for (const sheet of result.sheets) {
+    const use = shopping.get(sheet.stockId);
+    if (use) {
+      use.count++;
+    } else {
+      shopping.set(sheet.stockId, {
+        stockId: sheet.stockId,
+        length: sheet.length,
+        width: sheet.width,
+        count: 1,
+      });
+    }
+  }
+
+  const stockArea = result.sheets.reduce((sum, s) => sum + s.length * s.width, 0);
+  const partArea = result.sheets.reduce((sum, s) => sum + s.partArea, 0);
+  const waste = stockArea - partArea;
+  const wastePct = stockArea > 0 ? Math.round((waste / stockArea) * 1000) / 10 : 0;
+
+  let largestOffcut: Rect | null = null;
+  let maxOffcutA = 0;
+  for (const s of result.sheets) {
+    if (s.largestOffcut) {
+      const a = s.largestOffcut.w * s.largestOffcut.h;
+      if (a > maxOffcutA) {
+        maxOffcutA = a;
+        largestOffcut = s.largestOffcut;
+      }
+    }
+  }
+
+  return {
+    kind: 'sheet',
+    materialId: material.id,
+    name: material.name,
+    sheets: result.sheets,
+    unplaced: groupSheetUnplaced(missing, material),
+    shopping: [...shopping.values()].sort((a, b) => b.length * b.width - a.length * a.width),
+    stats: {
+      sheets: result.sheets.length,
+      stockArea,
+      partArea,
+      waste,
+      wastePct,
+      largestOffcut,
+    },
+  };
+}
+
 export function optimize(project: Project, options: PackOptions = DEFAULT_OPTIONS): OptimizeResult {
-  const materials = project.materials.map((m) => optimizeMaterial(m, project.kerf, options));
+  const materials: AnyMaterialResult[] = project.materials.map((m) =>
+    m.kind === 'sheet'
+      ? optimizeSheetMaterial(m, project.kerf, options)
+      : optimizeMaterial(m, project.kerf, options),
+  );
+
+  const linearMaterials = materials.filter((m): m is MaterialResult => m.kind === 'linear');
+  const sheetMaterials = materials.filter((m): m is SheetMaterialResult => m.kind === 'sheet');
+
+  let linearTotals: Stats | null = null;
+  if (linearMaterials.length > 0) {
+    const stockLength = linearMaterials.reduce((sum, m) => sum + m.stats.stockLength, 0);
+    const partLength = linearMaterials.reduce((sum, m) => sum + m.stats.partLength, 0);
+    linearTotals = makeStats({
+      boards: linearMaterials.reduce((sum, m) => sum + m.stats.boards, 0),
+      stockLength,
+      partLength,
+      largestOffcut: linearMaterials.reduce((max, m) => Math.max(max, m.stats.largestOffcut), 0),
+    });
+  }
+
+  let sheetTotals: SheetStats | null = null;
+  if (sheetMaterials.length > 0) {
+    const stockArea = sheetMaterials.reduce((sum, m) => sum + m.stats.stockArea, 0);
+    const partArea = sheetMaterials.reduce((sum, m) => sum + m.stats.partArea, 0);
+    const waste = stockArea - partArea;
+    const wastePct = stockArea > 0 ? Math.round((waste / stockArea) * 1000) / 10 : 0;
+    let largestOffcut: Rect | null = null;
+    let maxOffcutA = 0;
+    for (const m of sheetMaterials) {
+      if (m.stats.largestOffcut) {
+        const a = m.stats.largestOffcut.w * m.stats.largestOffcut.h;
+        if (a > maxOffcutA) {
+          maxOffcutA = a;
+          largestOffcut = m.stats.largestOffcut;
+        }
+      }
+    }
+    sheetTotals = {
+      sheets: sheetMaterials.reduce((sum, m) => sum + m.stats.sheets, 0),
+      stockArea,
+      partArea,
+      waste,
+      wastePct,
+      largestOffcut,
+    };
+  }
+
+  const pieces = (linearTotals ? linearTotals.boards : 0) + (sheetTotals ? sheetTotals.sheets : 0);
+
+  const wastes: number[] = [];
+  if (linearTotals && linearTotals.boards > 0) wastes.push(linearTotals.wastePct);
+  if (sheetTotals && sheetTotals.sheets > 0) wastes.push(sheetTotals.wastePct);
+  const wastePct = wastes.length > 0 ? Math.max(...wastes) : 0;
+
   return {
     materials,
-    totals: makeStats({
-      boards: materials.reduce((sum, m) => sum + m.stats.boards, 0),
-      stockLength: materials.reduce((sum, m) => sum + m.stats.stockLength, 0),
-      partLength: materials.reduce((sum, m) => sum + m.stats.partLength, 0),
-      largestOffcut: materials.reduce((max, m) => Math.max(max, m.stats.largestOffcut), 0),
-    }),
+    totals: {
+      linear: linearTotals,
+      sheet: sheetTotals,
+      pieces,
+      wastePct,
+    },
   };
 }

@@ -48,6 +48,53 @@ describe('serialize', () => {
     expect(parsed.materials[0]!.id).toMatch(/^[\w-]+$/);
   });
 
+  it('migrates v1 project to v2 with default sheet fields', () => {
+    const v1 = {
+      version: 1,
+      name: 'V1 Project',
+      units: 'mm',
+      kerf: 30,
+      materials: [
+        {
+          id: 'mat-1',
+          name: 'Pine',
+          stock: [{ id: 's-1', length: 24000, quantity: null }],
+          parts: [{ id: 'p-1', label: 'Leg', length: 8500, quantity: 4 }],
+          planingLength: null,
+          trimPerEnd: 200,
+        },
+      ],
+    };
+    const parsed = parseProject(v1);
+    expect(parsed.version).toBe(2);
+    expect(parsed.materials[0]!.kind).toBe('linear');
+    expect(parsed.materials[0]!.grain).toBe(true);
+    expect(parsed.materials[0]!.edgeTrim).toBe(0);
+    expect(parsed.materials[0]!.cutStyle).toBe('guillotine');
+    expect(parsed.materials[0]!.stock[0]!.width).toBe(0);
+    expect(parsed.materials[0]!.parts[0]!.width).toBe(0);
+    expect(parsed.materials[0]!.parts[0]!.grain).toBe('length');
+  });
+
+  it('round-trips a project with sheet material', () => {
+    const project = exampleProject();
+    project.materials.push({
+      id: 'sheet-mat',
+      name: 'Plywood',
+      kind: 'sheet',
+      grain: true,
+      edgeTrim: 100,
+      cutStyle: 'nested',
+      planingLength: null,
+      trimPerEnd: 0,
+      stock: [{ id: 's-sheet', length: 24400, width: 12200, quantity: null }],
+      parts: [
+        { id: 'p-sheet', label: 'Panel', length: 12000, width: 6000, quantity: 2, grain: 'any' },
+      ],
+    });
+    expect(fromJSON(toJSON(project))).toEqual(project);
+  });
+
   it('rejects invalid JSON', () => {
     expect(() => fromJSON('{')).toThrow(ProjectFormatError);
   });

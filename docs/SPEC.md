@@ -8,17 +8,20 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 
 ## Concepts
 
-| Term               | Meaning                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------ |
-| **Project**        | Name, units, kerf and a list of materials. One project is open at a time.                              |
-| **Material**       | A kind of stock (e.g. "Pine 45×95"). Has its own stock list, parts list and optional planing settings. |
-| **Stock**          | Board lengths available: length and quantity (blank = unlimited). No prices, by design.                |
-| **Part**           | A piece you need: label, length, quantity.                                                             |
-| **Kerf**           | Width of material removed by each cut. Default 3 mm.                                                   |
-| **Planing length** | The longest piece you want to plane at once (planer bed, shop space, handling).                        |
-| **Trim per end**   | Waste at each end of a blank (snipe and squaring cut), kerf included. Default 20 mm.                   |
-| **Blank**          | A rough-cut piece that holds one or more parts and gets planed before final cutting.                   |
-| **Offcut**         | Usable leftover at the end of a board.                                                                 |
+| Term               | Meaning                                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| **Project**        | Name, units, kerf and a list of materials. One project is open at a time.                           |
+| **Material**       | Either linear (1D boards) or sheet (2D panels). Has its own stock list, parts list and cut options. |
+| **Stock**          | Length (and width for sheets) available with quantity (blank = unlimited). No prices, by design.    |
+| **Part**           | A piece you need: label, length, width (sheets), quantity, and grain direction constraint.          |
+| **Kerf**           | Width of material removed by each cut. Default 3 mm.                                                |
+| **Planing length** | The longest piece you want to plane at once (linear boards only).                                   |
+| **Trim per end**   | Waste at each end of a blank (snipe and squaring cut), kerf included. Default 20 mm.                |
+| **Blank**          | A rough-cut piece that holds one or more parts and gets planed before final cutting.                |
+| **Grain**          | Orientation of wood grain (along sheet length). Parts can be constrained or set to Any.             |
+| **Edge trim**      | Border trimmed off all four edges of a sheet before cutting parts.                                  |
+| **Cut style**      | Guillotine (through-cuts for table/track saws) or Nested (free placement for CNC).                  |
+| **Offcut**         | Usable leftover at the end of a board or sheet.                                                     |
 
 ## Behaviour
 
@@ -49,6 +52,16 @@ A very simple tool for planning linear cuts in woodworking, similar to Opticutte
 - S22. Blanks are then optimized onto stock like parts. Several blank groupings are tried. The one with the best stock result wins; on a tie, the one with fewer (longer) blanks wins. The default planing length is 2200 mm.
 - S23. Output has two steps: (1) rough cut boards into blanks B1, B2, … (2) plane, then cut each blank into its parts.
 
+### Sheet goods workflow (per material, 2D)
+
+- S50. When material kind is `sheet`, stock items require both length and width. Parts require length, width, and an optional grain constraint (`length`, `width`, or `any`).
+- S51. When `grain` is enabled on the material, grain runs along sheet length (x axis). A part with `grain: 'length'` cannot be rotated; a part with `grain: 'width'` is rotated 90 degrees so its width aligns with length; `any` permits rotation if it improves nesting yield.
+- S52. Edge trim (default 10 mm) is deducted from all four perimeter edges before placing parts.
+- S53. Two cut styles are supported:
+  - **Guillotine**: Parts are packed into recursive through-cuts suitable for table saws and track saws, outputting a numbered cut sequence (rips and crosscuts).
+  - **Nested**: MaxRects placement for CNC routers and free layouts.
+- S54. Output includes to-scale 2D sheet diagrams, waste %, largest offcut, and step-by-step guillotine cut instructions. Print outputs a greyscale parts table and sheet diagram.
+
 ### Output
 
 - S30. A summary shows boards, total stock length, waste %, a one-line verdict and a shopping list per material.
@@ -70,4 +83,4 @@ See [DESIGN.md](DESIGN.md#delight). None of it may get in the way of entering da
 
 ## Out of scope (for now)
 
-2D sheet goods, grain direction, width/thickness optimization, accounts and a server. See [ROADMAP.md](ROADMAP.md).
+Width/thickness optimization for solid wood, accounts, pricing, and a server. See [ROADMAP.md](ROADMAP.md).

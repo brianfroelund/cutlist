@@ -92,3 +92,22 @@ export function formatTotal(length: Length, units: UnitSystem): string {
   if (units === 'mm') return `${(length / DU_PER_MM / 1000).toFixed(2)} m`;
   return `${(length / DU_PER_INCH / 12).toFixed(1)} ft`;
 }
+
+/** Formats an Area (in du²) compactly: m² with 2 decimals, or ft² with 1 decimal. */
+export function formatArea(areaVal: number, units: UnitSystem): string {
+  if (units === 'mm') {
+    // 1 du = 0.1 mm -> 1 du² = 0.01 mm² = 1e-8 m²
+    const m2 = areaVal / (DU_PER_MM * DU_PER_MM * 1_000_000);
+    return `${m2.toFixed(2)} m²`;
+  }
+  // 1 du = 1/254 in -> 1 du² = 1/(254^2) in² = 1/(254^2 * 144) ft²
+  const sqFt = areaVal / (DU_PER_INCH * DU_PER_INCH * 144);
+  return `${sqFt.toFixed(1)} ft²`;
+}
+
+/** Formats a 2D dimensions pair: "720 × 560 mm" or "28 1/4 × 22″". */
+export function formatSize(length: Length, width: Length, units: UnitSystem): string {
+  const lStr = formatLength(length, units);
+  const wStr = formatLength(width, units);
+  return units === 'mm' ? `${lStr} × ${wStr} mm` : `${lStr} × ${wStr}″`;
+}

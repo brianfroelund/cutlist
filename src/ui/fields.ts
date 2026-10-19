@@ -102,3 +102,43 @@ export function textField(o: FieldOptions<string>) {
   input.addEventListener('input', () => o.onCommit(input.value));
   return field(o.label, input, o.className);
 }
+
+export function selectField<T extends string>(o: {
+  label: string;
+  value: T;
+  options: { value: T; label: string; title?: string }[];
+  focus?: string;
+  className?: string;
+  title?: string;
+  onCommit(value: T): void;
+}) {
+  const currentOpt = o.options.find((opt) => opt.value === o.value);
+  const select = h(
+    'select',
+    {
+      class: 'input field-select',
+      'data-focus': o.focus,
+      title: o.title ?? currentOpt?.title,
+      'aria-label': o.label,
+      onChange: (e: Event) => {
+        const val = (e.target as HTMLSelectElement).value as T;
+        const chosen = o.options.find((opt) => opt.value === val);
+        if (chosen?.title) (e.target as HTMLSelectElement).title = chosen.title;
+        o.onCommit(val);
+      },
+    },
+    ...o.options.map((opt) =>
+      h(
+        'option',
+        { value: opt.value, selected: opt.value === o.value, title: opt.title },
+        opt.label,
+      ),
+    ),
+  );
+  return h(
+    'label',
+    { class: `field ${o.className ?? ''}`, title: o.title ?? currentOpt?.title },
+    h('span', { class: 'field-label' }, o.label),
+    h('span', { class: 'input-wrap' }, select),
+  );
+}

@@ -98,3 +98,67 @@ export function parsePastedParts(text: string, units: UnitSystem): PasteResult {
   });
   return { parts: parts.slice(0, MAX_ROWS), skipped };
 }
+
+export interface PastedSheetPart {
+  label: string;
+  length: Length;
+  width: Length;
+  quantity: number;
+}
+
+export interface PasteSheetResult {
+  parts: PastedSheetPart[];
+  skipped: number;
+}
+
+/** Columns: name, length, width, quantity.
+ * 3 cells: if cell 0 parses as length -> length, width, qty; else name, length, width (qty 1).
+ * 2 cells: length, width (qty 1).
+ */
+function readSheetRow(cells: string[], units: UnitSystem): PastedSheetPart | null {
+  let label = '';
+  let lengthText: string | undefined;
+  let widthText: string | undefined;
+  let qtyText: string | undefined;
+
+  if (cells.length >= 4) {
+    [label, lengthText, widthText, qtyText] = cells as [string, string, string, string];
+  } else if (cells.length === 3) {
+    if (parseLength(cells[0]!, units) !== null) {
+      [lengthText, widthText, qtyText] = cells as [string, string, string];
+    } else {
+      [label, lengthText, widthText] = cells as [string, string, string];
+    }
+  } else if (cells.length === 2) {
+    [lengthText, widthText] = cells as [string, string];
+  } else {
+    return null;
+  }
+
+  const length = lengthText ? parseLength(lengthText, units) : null;
+  const width = widthText ? parseLength(widthText, units) : null;
+  const qty = quantity(qtyText);
+
+  if (length === null || length <= 0 || width === null || width <= 0 || qty === null) {
+    return null;
+  }
+
+  return { label: label.slice(0, 120), length, width, quantity: qty };
+}
+
+export function parsePastedSheetParts(text: string, units: UnitSystem): PasteSheetResult {
+  const lines = text
+    .split(/\r\n|\n|\r/)
+    .filter((l) => l.replace(/[\t,;\s]/g, '') !== '')
+    .slice(0, MAX_ROWS + 1);
+  const delimiter = detectDelimiter(lines);
+  const parts: PastedSheetPart[] = [];
+  let skipped = 0;
+  lines.forEach((line, index) => {
+    const cells = delimiter ? splitRow(line, delimiter) : [line.trim()];
+    const part = readSheetRow(cells, units);
+    if (part) parts.push(part);
+    else if (index > 0) skipped++;
+  });
+  return { parts: parts.slice(0, MAX_ROWS), skipped };
+}

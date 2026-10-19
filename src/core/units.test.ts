@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { formatLength, formatTotal, inches, mm, parseLength } from './units';
+import {
+  formatArea,
+  formatLength,
+  formatSize,
+  formatTotal,
+  inches,
+  mm,
+  parseLength,
+} from './units';
 
 describe('parseLength (mm)', () => {
   it.each([
@@ -60,5 +68,18 @@ describe('formatLength', () => {
   it('formats totals', () => {
     expect(formatTotal(mm(7200), 'mm')).toBe('7.20 m');
     expect(formatTotal(inches(96), 'in')).toBe('8.0 ft');
+  });
+
+  it('formats areas', () => {
+    const aMetric = mm(2440) * mm(1220);
+    expect(formatArea(aMetric, 'mm')).toBe('2.98 m²');
+
+    const aImperial = inches(96) * inches(48);
+    expect(formatArea(aImperial, 'in')).toBe('32.0 ft²');
+  });
+
+  it('formats 2D sizes', () => {
+    expect(formatSize(mm(720), mm(560), 'mm')).toBe('720 × 560 mm');
+    expect(formatSize(inches(28.25), inches(22), 'in')).toBe('28 1/4 × 22″');
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { looksLikeTable, parsePastedParts } from './paste';
+import { looksLikeTable, parsePastedParts, parsePastedSheetParts } from './paste';
 import { inches, mm } from './units';
 
 describe('parsePastedParts', () => {
@@ -70,6 +70,48 @@ describe('parsePastedParts', () => {
 
   it('ignores blank lines and empty cells at the end', () => {
     expect(parsePastedParts('\nLeg\t850\t4\t\t\n\n\t\t\n', 'mm').parts).toHaveLength(1);
+  });
+});
+
+describe('parsePastedSheetParts', () => {
+  it('reads 4 columns (name, length, width, qty)', () => {
+    const text = 'Top\t1200\t600\t2\nSide\t800\t400\t4 pcs\n';
+    const result = parsePastedSheetParts(text, 'mm');
+    expect(result.parts).toEqual([
+      { label: 'Top', length: mm(1200), width: mm(600), quantity: 2 },
+      { label: 'Side', length: mm(800), width: mm(400), quantity: 4 },
+    ]);
+    expect(result.skipped).toBe(0);
+  });
+
+  it('reads 3 columns with numbers as length, width, qty', () => {
+    const text = '1200\t600\t2\n800\t400\t1\n';
+    const result = parsePastedSheetParts(text, 'mm');
+    expect(result.parts).toEqual([
+      { label: '', length: mm(1200), width: mm(600), quantity: 2 },
+      { label: '', length: mm(800), width: mm(400), quantity: 1 },
+    ]);
+  });
+
+  it('reads 3 columns with label as name, length, width (qty 1)', () => {
+    const text = 'Door\t1200\t600\n';
+    const result = parsePastedSheetParts(text, 'mm');
+    expect(result.parts).toEqual([
+      { label: 'Door', length: mm(1200), width: mm(600), quantity: 1 },
+    ]);
+  });
+
+  it('reads 2 columns as length and width', () => {
+    const text = '1200\t600\n';
+    const result = parsePastedSheetParts(text, 'mm');
+    expect(result.parts).toEqual([{ label: '', length: mm(1200), width: mm(600), quantity: 1 }]);
+  });
+
+  it('skips header and counts bad rows', () => {
+    const text = 'Name\tLength\tWidth\tQty\nTop\t1200\t600\t1\nBad\t1200\txyz\t1\n';
+    const result = parsePastedSheetParts(text, 'mm');
+    expect(result.parts).toHaveLength(1);
+    expect(result.skipped).toBe(1);
   });
 });
 

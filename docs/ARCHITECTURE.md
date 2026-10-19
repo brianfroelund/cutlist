@@ -13,6 +13,9 @@ flowchart LR
   Worker --> Optimize
   subgraph Core [src/core — pure]
     Optimize[optimize.ts] --> Pack[pack.ts]
+    Optimize --> Pack2D[pack2d.ts]
+    Pack2D --> Guillotine[guillotine.ts]
+    Pack2D --> MaxRects[maxrects.ts]
     Optimize --> Planing[planing.ts] --> Pack
     Serialize[serialize.ts]
     Units[units.ts]
@@ -34,27 +37,31 @@ flowchart LR
 
 ## Modules
 
-| Path                | Responsibility                                                                                                                                              |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/model.ts`     | Types, factories, example project.                                                                                                                          |
-| `core/units.ts`     | Parse/format mm and inches. The only place unit math happens.                                                                                               |
-| `core/pack.ts`      | Generic 1D bin packing with kerf over several stock lengths.                                                                                                |
-| `core/planing.ts`   | Group parts into planing blanks.                                                                                                                            |
-| `core/optimize.ts`  | Per-material orchestration, statistics, unplaced reasons.                                                                                                   |
-| `core/validate.ts`  | Non-blocking warnings, as codes (text lives in `ui/i18n/`).                                                                                                 |
-| `core/paste.ts`     | Parse spreadsheet/CSV text into parts (name, length, quantity).                                                                                             |
-| `core/serialize.ts` | Schema validation, migration, JSON and legacy (`#p=`) share links.                                                                                          |
-| `core/share.ts`     | Compact share format (`#Q…`): positional arrays → lz bytes → base-43 text. If you change `Project`, update `packProject`/`unpackProject` and bump `FORMAT`. |
-| `ui/dom.ts`         | `h()` element builder and small helpers.                                                                                                                    |
-| `ui/fields.ts`      | Length/count/text inputs with live validation.                                                                                                              |
-| `ui/inputs.ts`      | Settings card, material cards, rows, paste handling.                                                                                                        |
-| `ui/i18n/`          | Locale catalogues (`en.ts` is the source), detection, number/date formatting. Non-English locales load lazily.                                              |
-| `ui/results.ts`     | Summary, boards, blanks, cut lists, print header.                                                                                                           |
-| `ui/qr.ts`          | QR code as SVG elements (via `qrcode-generator`): URL as bytes, payload in alphanumeric mode. Filled into the print header on `beforeprint`.                |
-| `ui/delight/*`      | FLIP, swipe-to-delete, sawdust, favicon spinner, saw-blade toy.                                                                                             |
-| `styles/tokens.css` | Solarized palette and design tokens (light and dark).                                                                                                       |
-| `styles/print.css`  | Greyscale print layout.                                                                                                                                     |
-| `public/sw.js`      | Offline cache.                                                                                                                                              |
+| Path                 | Responsibility                                                                                                                                              |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `core/model.ts`      | Types, factories, example project.                                                                                                                          |
+| `core/units.ts`      | Parse/format mm and inches. The only place unit math happens.                                                                                               |
+| `core/pack.ts`       | Generic 1D bin packing with kerf over several stock lengths.                                                                                                |
+| `core/pack2d.ts`     | Multi-sheet 2D orchestration, scoring, multi-start randomization.                                                                                           |
+| `core/guillotine.ts` | 2D guillotine cutting with BSSF split rules and ordered cut sequence.                                                                                       |
+| `core/maxrects.ts`   | 2D MaxRects bin packing for nested CNC cuts.                                                                                                                |
+| `core/rect.ts`       | 2D rectangle geometry primitives.                                                                                                                           |
+| `core/planing.ts`    | Group parts into planing blanks.                                                                                                                            |
+| `core/optimize.ts`   | Per-material orchestration, statistics, unplaced reasons.                                                                                                   |
+| `core/validate.ts`   | Non-blocking warnings, as codes (text lives in `ui/i18n/`).                                                                                                 |
+| `core/paste.ts`      | Parse spreadsheet/CSV text into parts (1D boards or 2D sheets).                                                                                             |
+| `core/serialize.ts`  | Schema validation, migration, JSON and legacy (`#p=`) share links.                                                                                          |
+| `core/share.ts`      | Compact share format (`#Q…`): positional arrays → lz bytes → base-43 text. If you change `Project`, update `packProject`/`unpackProject` and bump `FORMAT`. |
+| `ui/dom.ts`          | `h()` element builder and small helpers.                                                                                                                    |
+| `ui/fields.ts`       | Length/count/text inputs with live validation.                                                                                                              |
+| `ui/inputs.ts`       | Settings card, material cards, rows, paste handling.                                                                                                        |
+| `ui/i18n/`           | Locale catalogues (`en.ts` is the source), detection, number/date formatting. Non-English locales load lazily.                                              |
+| `ui/results.ts`      | Summary, boards, sheets, blanks, cut lists, print header.                                                                                                   |
+| `ui/qr.ts`           | QR code as SVG elements (via `qrcode-generator`): URL as bytes, payload in alphanumeric mode. Filled into the print header on `beforeprint`.                |
+| `ui/delight/*`       | FLIP, swipe-to-delete, sawdust, favicon spinner, saw-blade toy.                                                                                             |
+| `styles/tokens.css`  | Solarized palette and design tokens (light and dark).                                                                                                       |
+| `styles/print.css`   | Greyscale print layout.                                                                                                                                     |
+| `public/sw.js`       | Offline cache.                                                                                                                                              |
 
 ## Constraints
 

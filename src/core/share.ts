@@ -7,7 +7,7 @@ import { parseProject } from './serialize';
  * positional arrays instead of JSON keys, no ids, lengths in mm, lz-compressed bytes,
  * then base-43 text that QR codes store in their dense alphanumeric mode.
  */
-const FORMAT = 2;
+const FORMAT = 3;
 const UNLIMITED = -1;
 
 /** QR alphanumeric characters minus space and %, so the text is also URL-fragment safe. */
@@ -16,6 +16,9 @@ const BASE = ALPHABET.length;
 
 const toMm = (du: number) => du / 10;
 const toDu = (mm: unknown) => (typeof mm === 'number' ? Math.round(mm * 10) : NaN);
+
+const grainToNum = (g: string) => (g === 'width' ? 1 : g === 'any' ? 2 : 0);
+const numToGrain = (n: unknown) => (n === 1 ? 'width' : n === 2 ? 'any' : 'length');
 
 export function packProject(project: Project): unknown[] {
   return [
@@ -27,8 +30,12 @@ export function packProject(project: Project): unknown[] {
       m.name,
       m.planingLength === null ? 0 : toMm(m.planingLength),
       toMm(m.trimPerEnd),
-      m.stock.map((s) => [toMm(s.length), s.quantity ?? UNLIMITED]),
-      m.parts.map((p) => [p.label, toMm(p.length), p.quantity]),
+      m.stock.map((s) => [toMm(s.length), s.quantity ?? UNLIMITED, toMm(s.width)]),
+      m.parts.map((p) => [p.label, toMm(p.length), p.quantity, toMm(p.width), grainToNum(p.grain)]),
+      m.kind === 'sheet' ? 1 : 0,
+      m.grain ? 1 : 0,
+      toMm(m.edgeTrim),
+      m.cutStyle === 'nested' ? 1 : 0,
     ]),
   ];
 }
@@ -38,30 +45,42 @@ const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 /** Rebuilds a full document and runs it through the regular validator. */
 export function unpackProject(data: unknown): Project {
   const [format, name, units, kerf, materials] = list(data);
-  if (format !== FORMAT) throw new Error('Unknown share format');
+  if (format !== 2 && format !== FORMAT) throw new Error('Unknown share format');
   return parseProject({
     version: SCHEMA_VERSION,
     name,
     units: units === 1 ? 'in' : 'mm',
     kerf: toDu(kerf),
     materials: list(materials).map((m) => {
-      const [mName, planing, trim, stock, parts] = list(m);
+      const [mName, planing, trim, stock, parts, kind, grain, edgeTrim, cutStyle] = list(m);
       return {
         id: newId(),
         name: mName,
+        kind: kind === 1 ? 'sheet' : 'linear',
+        grain: grain === undefined ? true : grain === 1,
+        edgeTrim: edgeTrim === undefined ? 0 : toDu(edgeTrim),
+        cutStyle: cutStyle === 1 ? 'nested' : 'guillotine',
         planingLength: planing === 0 ? null : toDu(planing),
         trimPerEnd: toDu(trim),
         stock: list(stock).map((s) => {
-          const [length, quantity] = list(s);
+          const [length, quantity, width] = list(s);
           return {
             id: newId(),
             length: toDu(length),
             quantity: quantity === UNLIMITED ? null : quantity,
+            width: width === undefined ? 0 : toDu(width),
           };
         }),
         parts: list(parts).map((p) => {
-          const [label, length, quantity] = list(p);
-          return { id: newId(), label, length: toDu(length), quantity };
+          const [label, length, quantity, width, pGrain] = list(p);
+          return {
+            id: newId(),
+            label,
+            length: toDu(length),
+            quantity,
+            width: width === undefined ? 0 : toDu(width),
+            grain: numToGrain(pGrain),
+          };
         }),
       };
     }),

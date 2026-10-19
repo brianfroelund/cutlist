@@ -199,4 +199,14 @@
   .board:has(.board-complete input:checked) > .bar::after {
     display: none;
   }
+
+  .sheet-diagram {
+    border: 1px solid #000;
+    break-inside: avoid;
+  }
+
+  .sheet-piece {
+    border: 1px solid #000;
+    color: #000;
+  }
 }

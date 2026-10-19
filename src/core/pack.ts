@@ -59,7 +59,7 @@ export function seededRandom(seed: number): Random {
   };
 }
 
-class Inventory {
+export class Inventory {
   private left = new Map<string, number>();
 
   constructor(stock: StockItem[]) {
@@ -205,7 +205,7 @@ function firstFit<T extends PackItem>(order: T[], stock: StockItem[], kerf: Leng
   return { bins: bins.map((b) => closeBin(b, kerf)), unplaced };
 }
 
-function jitter<T>(items: T[], random: Random): T[] {
+export function jitter<T>(items: T[], random: Random): T[] {
   const out = [...items];
   for (let i = 0; i < out.length - 1; i++) {
     if (random() < 0.25) [out[i], out[i + 1]] = [out[i + 1]!, out[i]!];

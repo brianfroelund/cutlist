@@ -1,5 +1,5 @@
 import type { Length, UnitSystem } from '../../core/model';
-import { formatTotal, formatWithUnit } from '../../core/units';
+import { formatArea, formatLength, formatTotal, formatWithUnit } from '../../core/units';
 import { en, type Messages } from './en';
 
 const loaders = {
@@ -95,7 +95,16 @@ export const fmtLength = (length: Length, units: UnitSystem): string =>
 export const fmtTotal = (length: Length, units: UnitSystem): string =>
   localizeNumber(formatTotal(length, units));
 
-export const fmtPct = (pct: number): string => localizeNumber(String(pct));
+export const fmtArea = (areaVal: number, units: UnitSystem): string =>
+  localizeNumber(formatArea(areaVal, units));
+
+export const fmtSize = (length: Length, width: Length, units: UnitSystem): string => {
+  const l = localizeNumber(formatLength(length, units));
+  const w = localizeNumber(formatLength(width, units));
+  return units === 'mm' ? `${l} × ${w} mm` : `${l} × ${w}″`;
+};
+
+export const fmtPct = (pct: number): string => localizeNumber(String(Math.round(pct * 10) / 10));
 
 export const fmtDate = (date: Date): string =>
   date.toLocaleDateString(locale === 'zh' ? 'zh-Hans' : locale, { dateStyle: 'long' });

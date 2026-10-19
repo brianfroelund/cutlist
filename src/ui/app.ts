@@ -1,4 +1,10 @@
-import { createProject, exampleProject, hasParts, type Project } from '../core/model';
+import {
+  createProject,
+  exampleProject,
+  hasParts,
+  type MaterialKind,
+  type Project,
+} from '../core/model';
 import type { OptimizeResult } from '../core/optimize';
 import { copy, isLocaleCode, LANGUAGES, locale, setLocale } from './i18n';
 import { setFaviconBusy } from './delight/favicon';
@@ -248,8 +254,10 @@ export function startApp(root: HTMLElement): void {
     store,
     onRemoved: (what: string, snapshot: Project) => undoable(copy.removed(what), snapshot),
     onFocusMaterial: (id: string) => (activeMaterial = id),
-    onPasted: (added: number, skipped: number, snapshot: Project) =>
-      added ? undoable(copy.pasted(added, skipped), snapshot) : toast(copy.pasteNothing),
+    onPasted: (added: number, skipped: number, snapshot: Project, kind?: MaterialKind) =>
+      added
+        ? undoable(copy.pasted(added, skipped), snapshot)
+        : toast(kind === 'sheet' ? copy.pasteNothingSheet : copy.pasteNothing),
   };
 
   const resultsCtx = {
@@ -262,7 +270,7 @@ export function startApp(root: HTMLElement): void {
 
   const celebrate = (result: OptimizeResult) => {
     const done = result.materials.every((m) => m.unplaced.length === 0);
-    if (!done || result.totals.boards === 0 || result.totals.wastePct > 2) return;
+    if (!done || result.totals.pieces === 0 || result.totals.wastePct > 2) return;
     if (sessionStorage.getItem('cutlist:celebrated')) return;
     sessionStorage.setItem('cutlist:celebrated', '1');
     sawdustBurst();
@@ -271,8 +279,8 @@ export function startApp(root: HTMLElement): void {
 
   const optimizer = new OptimizerClient((result, project) => {
     renderResults(resultsPanel, result, project, resultsCtx);
-    badge.hidden = result.totals.boards === 0;
-    badge.textContent = String(result.totals.boards);
+    badge.hidden = result.totals.pieces === 0;
+    badge.textContent = String(result.totals.pieces);
     celebrate(result);
   }, setFaviconBusy);
 
@@ -356,12 +364,13 @@ export function startApp(root: HTMLElement): void {
   // Built only at print time so typing never pays for QR encoding.
   window.addEventListener('beforeprint', () => {
     const slot = resultsPanel.querySelector<HTMLElement>('.print-qr');
-    if (!slot) return;
-    const url = shareUrl(store.get());
-    const qr = qrSvg(...splitShareUrl(url));
-    slot.replaceChildren(
-      ...(qr ? [qr, h('span', {}, copy.printQr)] : [h('span', {}, copy.printQrTooLarge)]),
-    );
+    if (slot) {
+      const url = shareUrl(store.get());
+      const qr = qrSvg(...splitShareUrl(url));
+      slot.replaceChildren(
+        ...(qr ? [qr, h('span', {}, copy.printQr)] : [h('span', {}, copy.printQrTooLarge)]),
+      );
+    }
   });
 
   installBlade(brandMark, {

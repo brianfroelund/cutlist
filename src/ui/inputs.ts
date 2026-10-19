@@ -1,18 +1,22 @@
 import {
   createMaterial,
   createPart,
+  createSheetStock,
   createStock,
   DEFAULT_PLANING_LENGTH,
+  DEFAULT_SHEET_WIDTH,
+  type CutStyle,
   type Material,
+  type MaterialKind,
   type Part,
   type Project,
   type StockItem,
   type UnitSystem,
 } from '../core/model';
-import { looksLikeTable, parsePastedParts } from '../core/paste';
+import { looksLikeTable, parsePastedParts, parsePastedSheetParts } from '../core/paste';
 import { attachSwipe } from './delight/swipe';
 import { h } from './dom';
-import { countField, lengthField, textField } from './fields';
+import { countField, lengthField, selectField, textField } from './fields';
 import { copy } from './i18n';
 import { icon } from './icons';
 import type { ChangeOptions, Store } from './store';
@@ -21,7 +25,7 @@ export interface InputsContext {
   store: Store;
   onRemoved(what: string, snapshot: Project): void;
   onFocusMaterial(id: string): void;
-  onPasted(added: number, skipped: number, snapshot: Project): void;
+  onPasted(added: number, skipped: number, snapshot: Project, kind?: MaterialKind): void;
 }
 
 export function renderInputs(root: HTMLElement, ctx: InputsContext, focus?: string): void {
@@ -48,7 +52,8 @@ export function addMaterial(store: Store): void {
 }
 
 export function addPart(store: Store, materialId: string): void {
-  const part = createPart();
+  const material = store.get().materials.find((m) => m.id === materialId);
+  const part = material?.kind === 'sheet' ? createPart('', 0, 1, 0, 'any') : createPart();
   store.change((p) => p.materials.find((m) => m.id === materialId)?.parts.push(part), {
     structure: true,
     focus: `${part.id}:label`,
@@ -63,25 +68,54 @@ export function pasteParts(
   atPartId?: string,
 ) {
   const snapshot = ctx.store.get();
-  const { parts, skipped } = parsePastedParts(text, snapshot.units);
-  if (parts.length === 0) {
-    ctx.onPasted(0, skipped, snapshot);
-    return;
+  const material = snapshot.materials.find((m) => m.id === materialId);
+  if (!material) return;
+
+  if (material.kind === 'sheet') {
+    const { parts, skipped } = parsePastedSheetParts(text, snapshot.units);
+    if (parts.length === 0) {
+      ctx.onPasted(0, skipped, snapshot, 'sheet');
+      return;
+    }
+    const created = parts.map((p) => createPart(p.label, p.length, p.quantity, p.width, 'any'));
+    ctx.store.change(
+      (p) => {
+        const target = p.materials.find((x) => x.id === materialId);
+        if (!target) return;
+        const index = target.parts.findIndex((x) => x.id === atPartId);
+        const at = target.parts[index];
+        const replace =
+          at !== undefined &&
+          !at.label.trim() &&
+          at.length === 0 &&
+          (at.width === undefined || at.width === 0);
+        if (index < 0) target.parts.push(...created);
+        else target.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+      },
+      { structure: true, focus: `${created[created.length - 1]!.id}:label` },
+    );
+    ctx.onPasted(created.length, skipped, snapshot, 'sheet');
+  } else {
+    const { parts, skipped } = parsePastedParts(text, snapshot.units);
+    if (parts.length === 0) {
+      ctx.onPasted(0, skipped, snapshot, 'linear');
+      return;
+    }
+    const created = parts.map((p) => createPart(p.label, p.length, p.quantity));
+    ctx.store.change(
+      (p) => {
+        const target = p.materials.find((x) => x.id === materialId);
+        if (!target) return;
+        const index = target.parts.findIndex((x) => x.id === atPartId);
+        const at = target.parts[index];
+        const replace = at !== undefined && !at.label.trim() && at.length === 0;
+        if (index < 0) target.parts.push(...created);
+        else target.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
+      },
+      { structure: true, focus: `${created[created.length - 1]!.id}:label` },
+    );
+    ctx.onPasted(created.length, skipped, snapshot, 'linear');
   }
-  const created = parts.map((p) => createPart(p.label, p.length, p.quantity));
-  ctx.store.change(
-    (p) => {
-      const material = p.materials.find((m) => m.id === materialId);
-      if (!material) return;
-      const index = material.parts.findIndex((x) => x.id === atPartId);
-      const at = material.parts[index];
-      const replace = at !== undefined && !at.label.trim() && at.length === 0;
-      if (index < 0) material.parts.push(...created);
-      else material.parts.splice(replace ? index : index + 1, replace ? 1 : 0, ...created);
-    },
-    { structure: true, focus: `${created[created.length - 1]!.id}:label` },
-  );
-  ctx.onPasted(created.length, skipped, snapshot);
 }
 
 function settingsCard(project: Project, ctx: InputsContext) {
@@ -143,8 +177,47 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
     ctx.onRemoved(what, snapshot);
   };
 
+  const kindBtn = (value: MaterialKind, label: string) =>
+    h(
+      'button',
+      {
+        type: 'button',
+        role: 'radio',
+        class: 'seg-btn',
+        'aria-checked': String(m.kind === value),
+        onClick: () => {
+          if (m.kind !== value) {
+            edit(
+              (t) => {
+                t.kind = value;
+                if (value === 'sheet') {
+                  for (const s of t.stock) {
+                    if (!s.width) s.width = DEFAULT_SHEET_WIDTH;
+                  }
+                  for (const p of t.parts) {
+                    if (!p.width)
+                      p.width = Math.min(p.length || DEFAULT_SHEET_WIDTH, DEFAULT_SHEET_WIDTH);
+                    if (!p.grain) p.grain = 'any';
+                  }
+                  if (t.edgeTrim === undefined) t.edgeTrim = 0;
+                  if (!t.cutStyle) t.cutStyle = 'guillotine';
+                }
+              },
+              { structure: true },
+            );
+          }
+        },
+      },
+      label,
+    );
+
   const addStock = () => {
     const stock = createStock();
+    edit((t) => t.stock.push(stock), { structure: true, focus: `${stock.id}:length` });
+  };
+
+  const addSheetStock = () => {
+    const stock = createSheetStock();
     edit((t) => t.stock.push(stock), { structure: true, focus: `${stock.id}:length` });
   };
 
@@ -170,6 +243,37 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
       copy.removeBoard,
       () => remove(copy.aBoardLength, (t) => (t.stock = t.stock.filter((x) => x.id !== s.id))),
       addStock,
+    );
+
+  const sheetStockRow = (s: StockItem) =>
+    row(
+      'sheetstock',
+      [
+        lengthField({
+          label: copy.length,
+          value: s.length || null,
+          units,
+          focus: `${s.id}:length`,
+          onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.length = v ?? 0))),
+        }),
+        lengthField({
+          label: copy.width,
+          value: s.width || null,
+          units,
+          focus: `${s.id}:width`,
+          onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.width = v ?? 0))),
+        }),
+        countField({
+          label: copy.qty,
+          value: s.quantity,
+          placeholder: '∞',
+          focus: `${s.id}:qty`,
+          onCommit: (v) => edit((t) => withRow(t.stock, s.id, (x) => (x.quantity = v))),
+        }),
+      ],
+      copy.removeSheet,
+      () => remove(copy.aSheetSize, (t) => (t.stock = t.stock.filter((x) => x.id !== s.id))),
+      addSheetStock,
     );
 
   const partRow = (part: Part) => {
@@ -217,7 +321,199 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
     return el;
   };
 
+  const sheetPartRow = (part: Part) => {
+    const el = row(
+      'sheetpart',
+      [
+        textField({
+          label: copy.part,
+          value: part.label,
+          placeholder: copy.partPlaceholder,
+          focus: `${part.id}:label`,
+          onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.label = v))),
+        }),
+        lengthField({
+          label: copy.length,
+          value: part.length || null,
+          units,
+          focus: `${part.id}:length`,
+          onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.length = v ?? 0))),
+        }),
+        lengthField({
+          label: copy.width,
+          value: part.width || null,
+          units,
+          focus: `${part.id}:width`,
+          onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.width = v ?? 0))),
+        }),
+        countField({
+          label: copy.qty,
+          value: part.quantity,
+          focus: `${part.id}:qty`,
+          onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.quantity = v ?? 0))),
+        }),
+        selectField({
+          label: copy.grain,
+          value: part.grain ?? 'any',
+          className: 'field-grain',
+          options: [
+            { value: 'any', label: '⟳', title: copy.grainAny },
+            { value: 'length', label: '→', title: copy.grainLength },
+            { value: 'width', label: '↓', title: copy.grainWidth },
+          ],
+          focus: `${part.id}:grain`,
+          onCommit: (v) => edit((t) => withRow(t.parts, part.id, (x) => (x.grain = v))),
+        }),
+      ],
+      copy.removePart,
+      () => {
+        const label = currentMaterial()?.parts.find((x) => x.id === part.id)?.label;
+        remove(label ? `“${label}”` : copy.aPart, (t) => {
+          t.parts = t.parts.filter((x) => x.id !== part.id);
+        });
+      },
+      () => addPart(ctx.store, m.id),
+    );
+    el.addEventListener('paste', (e) => {
+      const text = e.clipboardData?.getData('text/plain');
+      if (!text || !looksLikeTable(text)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      pasteParts(ctx, m.id, text, part.id);
+    });
+    return el;
+  };
+
+  const cutStyleBtn = (style: CutStyle, label: string) =>
+    h(
+      'button',
+      {
+        type: 'button',
+        role: 'radio',
+        class: 'seg-btn',
+        'aria-checked': String(m.cutStyle === style),
+        onClick: () => edit((t) => (t.cutStyle = style)),
+      },
+      label,
+    );
+
   const planing = m.planingLength !== null;
+
+  const stockSection =
+    m.kind === 'sheet'
+      ? section(
+          copy.stock,
+          copy.sheetStockHint,
+          'sheetstock',
+          [copy.length, copy.width, copy.qty],
+          m.stock.map(sheetStockRow),
+          copy.addSheet,
+          addSheetStock,
+        )
+      : section(
+          copy.stock,
+          copy.stockHint,
+          'stock',
+          [copy.length, copy.qty],
+          m.stock.map(stockRow),
+          copy.addBoard,
+          addStock,
+        );
+
+  const partsSection =
+    m.kind === 'sheet'
+      ? section(
+          copy.parts,
+          copy.partsHint,
+          'sheetpart',
+          [copy.part, copy.length, copy.width, copy.qty, copy.grain],
+          m.parts.map(sheetPartRow),
+          copy.addPart,
+          () => addPart(ctx.store, m.id),
+          copy.pasteHintSheet,
+        )
+      : section(
+          copy.parts,
+          copy.partsHint,
+          'part',
+          [copy.part, copy.length, copy.qty],
+          m.parts.map(partRow),
+          copy.addPart,
+          () => addPart(ctx.store, m.id),
+          copy.pasteHint,
+        );
+
+  const optionsSection =
+    m.kind === 'sheet'
+      ? h(
+          'div',
+          { class: 'sheet-options' },
+          h(
+            'div',
+            { class: 'sheet-options-fields' },
+            lengthField({
+              label: copy.edgeTrim,
+              value: m.edgeTrim,
+              units,
+              allowZero: true,
+              focus: `${m.id}:edgeTrim`,
+              onCommit: (v) => edit((t) => (t.edgeTrim = v ?? 0)),
+            }),
+            h(
+              'div',
+              { class: 'field' },
+              h('span', { class: 'field-label', id: `${m.id}-cutstyle` }, copy.cutStyle),
+              h(
+                'div',
+                { class: 'segmented', role: 'radiogroup', 'aria-labelledby': `${m.id}-cutstyle` },
+                cutStyleBtn('guillotine', copy.cutGuillotine),
+                cutStyleBtn('nested', copy.cutNested),
+              ),
+            ),
+          ),
+          h('p', { class: 'hint' }, copy.edgeTrimHint),
+        )
+      : h(
+          'div',
+          { class: 'planing' },
+          h(
+            'label',
+            { class: 'switch' },
+            h('input', {
+              type: 'checkbox',
+              checked: planing,
+              onChange: () =>
+                edit((t) => (t.planingLength = planing ? null : DEFAULT_PLANING_LENGTH), {
+                  structure: true,
+                  focus: planing ? undefined : `${m.id}:planing`,
+                }),
+            }),
+            h('span', {}, copy.planingToggle),
+          ),
+          planing &&
+            h(
+              'div',
+              { class: 'planing-fields' },
+              lengthField({
+                label: copy.planingLength,
+                value: m.planingLength,
+                units,
+                focus: `${m.id}:planing`,
+                onCommit: (v) => {
+                  if (v !== null) edit((t) => (t.planingLength = v));
+                },
+              }),
+              lengthField({
+                label: copy.trimPerEnd,
+                value: m.trimPerEnd,
+                units,
+                allowZero: true,
+                focus: `${m.id}:trim`,
+                onCommit: (v) => edit((t) => (t.trimPerEnd = v ?? 0)),
+              }),
+            ),
+          planing && h('p', { class: 'hint' }, copy.planingHint),
+        );
 
   return h(
     'article',
@@ -239,6 +535,12 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
         onInput: (e: Event) => edit((t) => (t.name = (e.target as HTMLInputElement).value)),
       }),
       h(
+        'div',
+        { class: 'segmented material-kind', role: 'radiogroup', 'aria-label': copy.materialKind },
+        kindBtn('linear', copy.kindBoards),
+        kindBtn('sheet', copy.kindSheets),
+      ),
+      h(
         'button',
         {
           type: 'button',
@@ -256,66 +558,9 @@ function materialCard(m: Material, units: UnitSystem, ctx: InputsContext) {
         icon('x'),
       ),
     ),
-    section(
-      copy.stock,
-      copy.stockHint,
-      'stock',
-      [copy.length, copy.qty],
-      m.stock.map(stockRow),
-      copy.addBoard,
-      addStock,
-    ),
-    section(
-      copy.parts,
-      copy.partsHint,
-      'part',
-      [copy.part, copy.length, copy.qty],
-      m.parts.map(partRow),
-      copy.addPart,
-      () => addPart(ctx.store, m.id),
-      copy.pasteHint,
-    ),
-    h(
-      'div',
-      { class: 'planing' },
-      h(
-        'label',
-        { class: 'switch' },
-        h('input', {
-          type: 'checkbox',
-          checked: planing,
-          onChange: () =>
-            edit((t) => (t.planingLength = planing ? null : DEFAULT_PLANING_LENGTH), {
-              structure: true,
-              focus: planing ? undefined : `${m.id}:planing`,
-            }),
-        }),
-        h('span', {}, copy.planingToggle),
-      ),
-      planing &&
-        h(
-          'div',
-          { class: 'planing-fields' },
-          lengthField({
-            label: copy.planingLength,
-            value: m.planingLength,
-            units,
-            focus: `${m.id}:planing`,
-            onCommit: (v) => {
-              if (v !== null) edit((t) => (t.planingLength = v));
-            },
-          }),
-          lengthField({
-            label: copy.trimPerEnd,
-            value: m.trimPerEnd,
-            units,
-            allowZero: true,
-            focus: `${m.id}:trim`,
-            onCommit: (v) => edit((t) => (t.trimPerEnd = v ?? 0)),
-          }),
-        ),
-      planing && h('p', { class: 'hint' }, copy.planingHint),
-    ),
+    stockSection,
+    partsSection,
+    optionsSection,
   );
 }
 
@@ -327,7 +572,7 @@ function withRow<T extends { id: string }>(rows: T[], id: string, fn: (row: T) =
 function section(
   title: string,
   hint: string,
-  kind: 'stock' | 'part',
+  kind: 'stock' | 'part' | 'sheetstock' | 'sheetpart',
   columns: string[],
   rows: HTMLElement[],
   addLabel: string,
@@ -351,7 +596,7 @@ function section(
 }
 
 function row(
-  kind: 'stock' | 'part',
+  kind: 'stock' | 'part' | 'sheetstock' | 'sheetpart',
   fields: HTMLElement[],
   removeLabel: string,
   onRemove: () => void,
@@ -359,7 +604,10 @@ function row(
 ) {
   const el = h(
     'div',
-    { class: `row ${kind}-grid`, 'data-testid': `${kind}-row` },
+    {
+      class: `row ${kind}-grid`,
+      'data-testid': kind.includes('stock') ? 'stock-row' : 'part-row',
+    },
     fields,
     h(
       'button',
@@ -376,12 +624,14 @@ function row(
   attachSwipe(wrap, el, onRemove);
   // Enter moves down a row, or adds a new one from the last row — spreadsheet style.
   el.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' || !(e.target instanceof HTMLInputElement)) return;
+    if (
+      e.key !== 'Enter' ||
+      !(e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement)
+    )
+      return;
     e.preventDefault();
     const field = e.target.dataset.focus?.split(':')[1];
-    const next = wrap.nextElementSibling?.querySelector<HTMLInputElement>(
-      `[data-focus$=":${field}"]`,
-    );
+    const next = wrap.nextElementSibling?.querySelector<HTMLElement>(`[data-focus$=":${field}"]`);
     if (next) next.focus();
     else onEnterLast();
   });

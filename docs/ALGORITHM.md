@@ -33,10 +33,41 @@ Each result gets a score tuple, compared lexicographically (lower is better):
 
 Useful length (for waste %) counts final parts only, so trims and blank kerfs count as waste.
 
+## 2D Sheet packing (`pack2d.ts`, `guillotine.ts`, `maxrects.ts`)
+
+2D sheet optimization packs rectangular parts into rectangular sheets with perimeter edge trim, kerfs between pieces, and grain constraints.
+
+### Grain model
+
+- When `grain` is enabled on the material, the wood grain runs along the sheet length ($x$ axis).
+- Parts with `grain: 'length'` cannot be rotated ($w$ along $x$, $h$ along $y$).
+- Parts with `grain: 'width'` are rotated 90° ($h$ along $x$, $w$ along $y$).
+- Parts with `grain: 'any'` can be placed in either orientation to maximize yield.
+
+### Strategies
+
+1. **Guillotine (`guillotine.ts`)**:
+   - Edge-to-edge through-cuts executed sequentially (table/track saw).
+   - Recursive binary space partitioning of free rectangles.
+   - Parts are matched using Best Short Side Fit (BSSF) and Short Axis Split (SLAS) rules with kerf deduction.
+   - Emits a numbered sequence of physical cuts (rips and crosscuts) with their coordinates and dimensions.
+2. **Nested (`maxrects.ts`)**:
+   - Maximal Rectangles bin packing (MaxRects-BSSF) for CNC routers and free layouts.
+   - Maintains the maximal set of free overlapping rectangles; when a part is placed, intersecting free rectangles are split and non-maximal rectangles are pruned.
+3. **Multi-start orchestration (`pack2d.ts`)**:
+   - Sorts parts descending by area, then perimeter.
+   - Evaluates sheets across available stock sizes.
+   - Runs deterministic base pass plus randomized order perturbations using seeded RNG.
+   - Lexicographical score tuple (lower is better):
+     ```
+     [unplaced count, total stock area, sheet count, −largest offcut area]
+     ```
+
 ## Worked examples (covered by tests)
 
 - Stock 2400, kerf 3, parts 6×700 + 4×500 → 3 boards.
 - Planing 1200, trim 10, kerf 3, parts 4×550 → two blanks of 1123 mm (10 + 550 + 3 + 550 + 10) from one 2400 board.
+- Sheet 2440×1220, kerf 3, edge trim 10, parts 2×(1200×600) + 2×(800×400) → 1 sheet.
 
 ## Ideas for improvement
 
